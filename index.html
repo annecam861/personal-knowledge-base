@@ -12,7 +12,8 @@
         }
 
         :root {
-            --cream: #FAF7F0;
+            --bg: #FAF7F0;
+            --surface: #FFF;
             --sage: #8B9D83;
             --sage-dark: #6B7D63;
             --coral: #E39774;
@@ -20,21 +21,30 @@
             --text: #2C2C2C;
             --text-light: #666;
             --border: #DDD;
-            --white: #FFF;
             --shadow: rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode {
+            --bg: #1a1a1a;
+            --surface: #2d2d2d;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --border: #444;
+            --shadow: rgba(0,0,0,0.3);
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: var(--cream);
+            background: var(--bg);
             color: var(--text);
             line-height: 1.6;
             padding-bottom: 80px;
+            transition: background 0.3s, color 0.3s;
         }
 
         /* Header */
         header {
-            background: var(--white);
+            background: var(--surface);
             border-bottom: 2px solid var(--sage);
             padding: 1rem;
             position: sticky;
@@ -63,13 +73,23 @@
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .dark-mode-toggle {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
         }
 
         /* Navigation */
         nav {
-            background: var(--white);
+            background: var(--surface);
             padding: 0.5rem 1rem;
             border-bottom: 1px solid var(--border);
+            overflow-x: auto;
         }
 
         .nav-content {
@@ -77,7 +97,6 @@
             margin: 0 auto;
             display: flex;
             gap: 1rem;
-            overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -124,7 +143,7 @@
 
         .btn-primary {
             background: var(--sage);
-            color: var(--white);
+            color: var(--surface);
         }
 
         .btn-primary:hover {
@@ -133,7 +152,7 @@
 
         .btn-secondary {
             background: var(--coral);
-            color: var(--white);
+            color: var(--surface);
         }
 
         .btn-secondary:hover {
@@ -148,7 +167,7 @@
 
         .btn-outline:hover {
             background: var(--sage);
-            color: var(--white);
+            color: var(--surface);
         }
 
         .btn-small {
@@ -158,7 +177,7 @@
 
         /* Cards */
         .card {
-            background: var(--white);
+            background: var(--surface);
             border-radius: 12px;
             padding: 1.5rem;
             margin-bottom: 1rem;
@@ -173,6 +192,26 @@
 
         .card-clickable {
             cursor: pointer;
+        }
+
+        /* Daily Capture */
+        .daily-capture {
+            background: linear-gradient(135deg, var(--sage) 0%, var(--coral) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .daily-capture h2 {
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .daily-capture p {
+            opacity: 0.9;
+            margin-bottom: 1rem;
         }
 
         /* Note Card */
@@ -218,6 +257,8 @@
         .type-decision { background: #D1FAE5; color: #059669; }
         .type-reference { background: #FEE2E2; color: #DC2626; }
         .type-question { background: #FEF3C7; color: #D97706; }
+        .type-quote { background: #FCE7F3; color: #DB2777; }
+        .type-resource { background: #DBEAFE; color: #2563EB; }
 
         .note-content {
             color: var(--text);
@@ -238,7 +279,7 @@
             left: 0;
             right: 0;
             height: 30px;
-            background: linear-gradient(transparent, var(--white));
+            background: linear-gradient(transparent, var(--surface));
         }
 
         /* Tags */
@@ -251,11 +292,19 @@
 
         .tag {
             padding: 0.3rem 0.8rem;
-            background: var(--cream);
+            background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 20px;
             font-size: 0.8rem;
             color: var(--text);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tag:hover {
+            background: var(--sage);
+            color: white;
+            border-color: var(--sage);
         }
 
         .tag-input-container {
@@ -266,7 +315,7 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             min-height: 44px;
-            background: var(--white);
+            background: var(--surface);
         }
 
         .tag-item {
@@ -275,7 +324,7 @@
             gap: 0.5rem;
             padding: 0.3rem 0.8rem;
             background: var(--sage);
-            color: var(--white);
+            color: white;
             border-radius: 20px;
             font-size: 0.85rem;
         }
@@ -291,6 +340,8 @@
             flex: 1;
             min-width: 120px;
             font-size: 0.9rem;
+            background: transparent;
+            color: var(--text);
         }
 
         /* Forms */
@@ -315,11 +366,12 @@
             border-radius: 8px;
             font-size: 1rem;
             font-family: inherit;
-            background: var(--white);
+            background: var(--surface);
+            color: var(--text);
         }
 
         textarea {
-            min-height: 200px;
+            min-height: 300px;
             resize: vertical;
             font-family: 'Courier New', monospace;
         }
@@ -336,39 +388,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
-        }
-
-        @media (max-width: 768px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Search */
-        .search-container {
-            margin-bottom: 2rem;
-        }
-
-        .search-box {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .search-input {
-            flex: 1;
-        }
-
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .filter-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
         }
 
         /* Timeline */
@@ -401,7 +420,7 @@
             height: 12px;
             border-radius: 50%;
             background: var(--coral);
-            border: 2px solid var(--white);
+            border: 2px solid var(--surface);
             box-shadow: 0 0 0 2px var(--coral);
         }
 
@@ -423,7 +442,7 @@
 
         .cloud-tag {
             padding: 0.5rem 1rem;
-            background: var(--white);
+            background: var(--surface);
             border: 1px solid var(--sage);
             border-radius: 20px;
             cursor: pointer;
@@ -432,7 +451,7 @@
 
         .cloud-tag:hover {
             background: var(--sage);
-            color: var(--white);
+            color: white;
             transform: scale(1.05);
         }
 
@@ -440,12 +459,12 @@
         .related-notes {
             margin-top: 2rem;
             padding-top: 2rem;
-            border-top: 2px solid var(--cream);
+            border-top: 2px solid var(--bg);
         }
 
         .related-note-item {
             padding: 1rem;
-            background: var(--cream);
+            background: var(--bg);
             border-radius: 8px;
             margin-bottom: 0.75rem;
             cursor: pointer;
@@ -453,7 +472,7 @@
         }
 
         .related-note-item:hover {
-            background: #E8E5DD;
+            background: var(--border);
         }
 
         /* Pattern Alert */
@@ -465,6 +484,10 @@
             border-radius: 4px;
         }
 
+        body.dark-mode .pattern-alert {
+            background: #3a2d1f;
+        }
+
         .pattern-alert-title {
             font-weight: 600;
             margin-bottom: 0.5rem;
@@ -473,7 +496,7 @@
 
         /* Lists */
         .list-item {
-            background: var(--white);
+            background: var(--surface);
             padding: 1rem;
             border-radius: 8px;
             margin-bottom: 0.75rem;
@@ -504,7 +527,7 @@
             margin-bottom: 1rem;
         }
 
-        /* Floating Action Button */
+        /* FAB */
         .fab {
             position: fixed;
             bottom: 2rem;
@@ -513,7 +536,7 @@
             height: 60px;
             border-radius: 50%;
             background: var(--coral);
-            color: var(--white);
+            color: white;
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
@@ -551,14 +574,13 @@
         }
 
         .modal-content {
-            background: var(--white);
+            background: var(--surface);
             border-radius: 12px;
             padding: 2rem;
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            position: relative;
         }
 
         .modal-header {
@@ -591,7 +613,7 @@
         /* Markdown Preview */
         .markdown-preview {
             padding: 1rem;
-            background: var(--cream);
+            background: var(--bg);
             border-radius: 8px;
             line-height: 1.7;
         }
@@ -618,7 +640,7 @@
         }
 
         .markdown-preview code {
-            background: var(--white);
+            background: var(--surface);
             padding: 0.2rem 0.4rem;
             border-radius: 4px;
             font-family: 'Courier New', monospace;
@@ -628,14 +650,6 @@
         .markdown-preview a {
             color: var(--sage-dark);
             text-decoration: underline;
-        }
-
-        .markdown-preview strong {
-            font-weight: 600;
-        }
-
-        .markdown-preview em {
-            font-style: italic;
         }
 
         /* Preview Toggle */
@@ -651,7 +665,7 @@
 
         .preview-toggle button.active {
             background: var(--sage);
-            color: var(--white);
+            color: white;
         }
 
         /* Templates */
@@ -671,7 +685,7 @@
         }
 
         .stat-card {
-            background: var(--white);
+            background: var(--surface);
             padding: 1.5rem;
             border-radius: 12px;
             text-align: center;
@@ -701,7 +715,7 @@
             color: var(--sage-dark);
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--cream);
+            border-bottom: 2px solid var(--bg);
         }
 
         /* Favorite Star */
@@ -718,7 +732,7 @@
 
         /* Auto-suggest */
         .auto-suggest {
-            background: var(--cream);
+            background: var(--bg);
             padding: 0.75rem;
             border-radius: 8px;
             margin-top: 0.5rem;
@@ -739,7 +753,7 @@
 
         .suggested-tag {
             padding: 0.3rem 0.8rem;
-            background: var(--white);
+            background: var(--surface);
             border: 1px solid var(--sage);
             border-radius: 20px;
             font-size: 0.8rem;
@@ -749,7 +763,42 @@
 
         .suggested-tag:hover {
             background: var(--sage);
-            color: var(--white);
+            color: white;
+        }
+
+        /* Note Links */
+        .note-links-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--bg);
+        }
+
+        .link-item {
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .link-item:hover {
+            background: var(--border);
+        }
+
+        /* Search */
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            flex: 1;
         }
 
         /* Responsive */
@@ -785,6 +834,10 @@
             .modal-content {
                 padding: 1.5rem;
             }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Utility Classes */
@@ -805,67 +858,63 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header>
         <div class="header-content">
-            <h1>📚 Personal Knowledge Base</h1>
+            <h1>🧠 Your Brain, Externalized</h1>
             <div class="header-actions">
-                <button class="btn btn-primary btn-small" onclick="app.showCaptureModal()">+ New Note</button>
-                <button class="btn btn-outline btn-small" onclick="app.showExportModal()">Export</button>
-                <button class="btn btn-outline btn-small" onclick="app.showImportModal()">Import</button>
+                <button class="dark-mode-toggle" onclick="app.toggleDarkMode()" title="Toggle dark mode">🌙</button>
+                <button class="btn btn-primary btn-small" onclick="app.showCaptureModal()">+ Capture</button>
+                <button class="btn btn-outline btn-small" onclick="app.switchView('settings')">⚙️</button>
             </div>
         </div>
     </header>
 
-    <!-- Navigation -->
     <nav>
         <div class="nav-content">
-            <button class="nav-btn active" onclick="app.switchView('notes')">All Notes</button>
+            <button class="nav-btn active" onclick="app.switchView('home')">Home</button>
+            <button class="nav-btn" onclick="app.switchView('all')">All Notes</button>
+            <button class="nav-btn" onclick="app.switchView('unprocessed')">Needs Love</button>
             <button class="nav-btn" onclick="app.switchView('timeline')">Timeline</button>
-            <button class="nav-btn" onclick="app.switchView('tags')">Tag Cloud</button>
             <button class="nav-btn" onclick="app.switchView('projects')">Projects</button>
-            <button class="nav-btn" onclick="app.switchView('goals')">Goals</button>
-            <button class="nav-btn" onclick="app.switchView('reading')">Reading List</button>
-            <button class="nav-btn" onclick="app.switchView('someday')">Someday/Maybe</button>
+            <button class="nav-btn" onclick="app.switchView('tags')">Tags</button>
+            <button class="nav-btn" onclick="app.switchView('review')">Review</button>
+            <button class="nav-btn" onclick="app.switchView('reading')">Reading</button>
+            <button class="nav-btn" onclick="app.switchView('someday')">Someday</button>
         </div>
     </nav>
 
-    <!-- Main Content -->
-    <main id="main-content">
-        <!-- Content will be rendered here -->
-    </main>
+    <main id="main-content"></main>
 
-    <!-- Floating Action Button -->
-    <button class="fab" onclick="app.showCaptureModal()" title="New Note">+</button>
+    <button class="fab" onclick="app.showCaptureModal()" title="Capture something">+</button>
 
-    <!-- Capture/Edit Modal -->
+    <!-- Capture Modal -->
     <div id="capture-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modal-title">Capture New Note</h2>
+                <h2 class="modal-title" id="modal-title">What did your brain bump into today?</h2>
                 <button class="modal-close" onclick="app.closeCaptureModal()">×</button>
             </div>
 
-            <!-- Templates -->
             <div class="template-buttons">
                 <button class="btn btn-small btn-outline" onclick="app.applyTemplate('blank')">Blank</button>
-                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('idea')">Idea</button>
-                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('decision')">Decision Log</button>
-                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('learning')">Learning</button>
-                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('book')">Book Notes</button>
-                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('meeting')">Meeting Notes</button>
+                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('idea')">💡 Idea</button>
+                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('learning')">📚 Learning</button>
+                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('decision')">⚖️ Decision</button>
+                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('book')">📖 Book</button>
+                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('meeting')">🤝 Meeting</button>
+                <button class="btn btn-small btn-outline" onclick="app.applyTemplate('voice')">🎤 Voice</button>
             </div>
 
             <form id="note-form" onsubmit="app.saveNote(event)">
                 <input type="hidden" id="note-id">
 
                 <div class="form-group">
-                    <label for="note-title">Title *</label>
+                    <label for="note-title">Title</label>
                     <input type="text" id="note-title" required>
                 </div>
 
                 <div class="form-group">
-                    <label for="note-content">Content (Markdown) *</label>
+                    <label for="note-content">Content (Markdown supported)</label>
                     <div class="preview-toggle">
                         <button type="button" class="btn btn-small active" onclick="app.togglePreview('edit')">Edit</button>
                         <button type="button" class="btn btn-small" onclick="app.togglePreview('preview')">Preview</button>
@@ -878,26 +927,30 @@
                     <div class="form-group">
                         <label for="note-type">Type</label>
                         <select id="note-type">
-                            <option value="insight">Insight</option>
-                            <option value="learning">Learning</option>
                             <option value="idea">Idea</option>
+                            <option value="learning">Learning</option>
+                            <option value="insight">Insight</option>
                             <option value="decision">Decision</option>
                             <option value="reference">Reference</option>
-                            <option value="question">Question</option>
+                            <option value="quote">Quote</option>
+                            <option value="resource">Resource</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="note-status">Status</label>
-                        <select id="note-status">
-                            <option value="unprocessed">Unprocessed</option>
-                            <option value="processed">Processed</option>
+                        <label for="note-area">Area</label>
+                        <select id="note-area">
+                            <option value="">Not sure</option>
+                            <option value="business">Business</option>
+                            <option value="personal">Personal</option>
+                            <option value="creative">Creative</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="note-tags">Tags</label>
+                    <label for="note-tags">Tags (press Enter or comma to add)</label>
                     <div class="tag-input-container" id="tag-container">
                         <input type="text" class="tag-input" id="tag-input" placeholder="Add tags...">
                     </div>
@@ -906,109 +959,60 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="note-project">Project</label>
-                        <input type="text" id="note-project" list="projects-list">
+                        <label for="note-project">Project (if any)</label>
+                        <input type="text" id="note-project" list="projects-list" placeholder="Optional">
                         <datalist id="projects-list"></datalist>
                     </div>
 
                     <div class="form-group">
-                        <label for="note-goal">Goal</label>
-                        <input type="text" id="note-goal" list="goals-list">
+                        <label for="note-goal">Goal (if any)</label>
+                        <input type="text" id="note-goal" list="goals-list" placeholder="Optional">
                         <datalist id="goals-list"></datalist>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="note-area">Area</label>
-                        <input type="text" id="note-area" list="areas-list">
-                        <datalist id="areas-list"></datalist>
-                    </div>
-
-                    <div class="form-group">
                         <label for="note-context">Context</label>
-                        <input type="text" id="note-context">
+                        <select id="note-context">
+                            <option value="">Not specified</option>
+                            <option value="conversation">Conversation</option>
+                            <option value="article">Article</option>
+                            <option value="book">Book</option>
+                            <option value="client work">Client work</option>
+                            <option value="personal experience">Personal experience</option>
+                            <option value="other">Other</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="note-source">Source</label>
-                        <input type="text" id="note-source">
-                    </div>
 
                     <div class="form-group">
-                        <label for="note-date">Date Captured</label>
-                        <input type="date" id="note-date">
+                        <label for="note-source">Source (link/reference)</label>
+                        <input type="text" id="note-source" placeholder="Optional">
                     </div>
                 </div>
 
                 <div class="form-group">
+                    <label for="note-date">Date</label>
+                    <input type="date" id="note-date">
+                </div>
+
+                <div class="form-group">
                     <label>
-                        <input type="checkbox" id="note-favorite"> Mark as Favorite
+                        <input type="checkbox" id="note-favorite"> ⭐ This is important
                     </label>
                 </div>
 
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="note-key-insight"> Key Insight
+                        <input type="checkbox" id="note-key-insight"> 💡 Key insight (I should remember this)
                     </label>
                 </div>
 
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" onclick="app.closeCaptureModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Save Note</button>
+                    <button type="submit" class="btn btn-primary">Save & Don't Forget</button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <!-- Export Modal -->
-    <div id="export-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Export</h2>
-                <button class="modal-close" onclick="app.closeExportModal()">×</button>
-            </div>
-
-            <div class="form-group">
-                <button class="btn btn-primary" onclick="app.exportAllJSON()">Export All as JSON</button>
-                <p class="text-muted mt-1">Download complete database as JSON file</p>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn btn-outline" onclick="app.closeExportModal()">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Import Modal -->
-    <div id="import-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Import</h2>
-                <button class="modal-close" onclick="app.closeImportModal()">×</button>
-            </div>
-
-            <div class="form-group">
-                <label for="import-file">Select JSON File</label>
-                <input type="file" id="import-file" accept=".json">
-            </div>
-
-            <div class="form-group">
-                <label>
-                    <input type="radio" name="import-mode" value="merge" checked> Merge with existing notes
-                </label>
-                <br>
-                <label>
-                    <input type="radio" name="import-mode" value="replace"> Replace all notes
-                </label>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn btn-outline" onclick="app.closeImportModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="app.importJSON()">Import</button>
-            </div>
         </div>
     </div>
 
@@ -1016,6 +1020,32 @@
     <div id="detail-modal" class="modal">
         <div class="modal-content">
             <div id="detail-content"></div>
+        </div>
+    </div>
+
+    <!-- Link Notes Modal -->
+    <div id="link-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Link to Other Notes</h2>
+                <button class="modal-close" onclick="app.closeLinkModal()">×</button>
+            </div>
+            <div id="link-content"></div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="app.saveLin ks()">Save Links</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Super Note Modal -->
+    <div id="super-note-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Create a Super Note</h2>
+                <button class="modal-close" onclick="app.closeSuperNoteModal()">×</button>
+            </div>
+            <p class="text-muted mb-2">Pull together everything you know about a topic.</p>
+            <div id="super-note-content"></div>
         </div>
     </div>
 
@@ -1027,111 +1057,160 @@
                     readingList: [],
                     somedayMaybe: []
                 },
-                settings: {},
-                currentView: 'notes',
+                settings: {
+                    darkMode: false,
+                    showDailyCapture: true,
+                    defaultType: 'idea',
+                    defaultArea: ''
+                },
+                currentView: 'home',
                 currentNoteId: null,
                 editingTags: [],
                 searchQuery: '',
-                filters: {}
+                filters: {},
+                selectedNotesForLinking: []
             },
 
             init() {
                 this.loadState();
                 this.seedDataIfEmpty();
+                this.applyDarkMode();
                 this.render();
                 this.setupEventListeners();
             },
 
             loadState() {
-                const notes = localStorage.getItem('pkb_notes');
-                const lists = localStorage.getItem('pkb_lists');
-                const settings = localStorage.getItem('pkb_settings');
+                try {
+                    const notes = localStorage.getItem('pkb_notes');
+                    const lists = localStorage.getItem('pkb_lists');
+                    const settings = localStorage.getItem('pkb_settings');
 
-                if (notes) this.state.notes = JSON.parse(notes);
-                if (lists) this.state.lists = JSON.parse(lists);
-                if (settings) this.state.settings = JSON.parse(settings);
+                    if (notes) this.state.notes = JSON.parse(notes);
+                    if (lists) this.state.lists = JSON.parse(lists);
+                    if (settings) this.state.settings = { ...this.state.settings, ...JSON.parse(settings) };
+                } catch (error) {
+                    console.error('Error loading state:', error);
+                }
             },
 
             saveState() {
-                localStorage.setItem('pkb_notes', JSON.stringify(this.state.notes));
-                localStorage.setItem('pkb_lists', JSON.stringify(this.state.lists));
-                localStorage.setItem('pkb_settings', JSON.stringify(this.state.settings));
+                try {
+                    localStorage.setItem('pkb_notes', JSON.stringify(this.state.notes));
+                    localStorage.setItem('pkb_lists', JSON.stringify(this.state.lists));
+                    localStorage.setItem('pkb_settings', JSON.stringify(this.state.settings));
+                } catch (error) {
+                    console.error('Error saving state:', error);
+                    alert('Couldn\'t save your changes. Your browser storage might be full.');
+                }
             },
 
             seedDataIfEmpty() {
                 if (this.state.notes.length === 0) {
                     const sampleNotes = [
                         {
-                            title: "Client Management Insight (Sagebrush & Steel)",
-                            type: "insight",
-                            tags: ["client-management", "boundaries", "pricing"],
-                            project: "Sagebrush & Steel",
-                            contentMarkdown: "Clients don't know what they need — they know what feels wrong. When I lead with diagnostic questions instead of deliverables, the project moves smoother. Boundaries prevent burnout: set revision limits early, define in-scope/out-of-scope, and repeat."
-                        },
-                        {
-                            title: "Pattern: I Overcomplicate Systems",
-                            type: "insight",
-                            tags: ["perfectionism", "systems", "overwhelm"],
-                            contentMarkdown: "I tend to design the perfect system instead of the simple one I'll actually use. When I cut the system in half, I follow it."
-                        },
-                        {
-                            title: "Decision Log: When to Offer Discounts",
-                            type: "decision",
-                            tags: ["pricing", "discounts", "money"],
-                            contentMarkdown: "**Decision:** Only give discounts if (1) I need the portfolio piece, or (2) it unlocks strategic value.\n\n**Outcome:** Better boundaries + fewer resentment jobs."
-                        },
-                        {
-                            title: "Hot Mess Home Content Lesson",
-                            type: "learning",
-                            tags: ["content", "authenticity", "moms"],
-                            area: "creative",
-                            contentMarkdown: "The posts that hit hardest are honest and funny. Humor + truth = engagement."
-                        },
-                        {
-                            title: "AI Workflow Insight",
-                            type: "insight",
-                            tags: ["AI", "Claude", "ChatGPT", "workflows"],
-                            contentMarkdown: "When prompts have guardrails, AI performs like a senior designer. Without constraints, it hallucinates."
-                        },
-                        {
-                            title: "Branding Rule I Keep Relearning",
-                            type: "learning",
-                            tags: ["branding", "clarity", "strategy"],
-                            contentMarkdown: "Brand clarity beats aesthetics. Story sells more than polish."
-                        },
-                        {
-                            title: "Energy Seasons (Mom Life)",
-                            type: "insight",
-                            tags: ["motherhood", "burnout", "energy"],
-                            contentMarkdown: "My energy runs in cycles: weekends, mid-month, PMS week. My systems must adjust to low-energy seasons."
-                        },
-                        {
-                            title: "Local Montana Niche Idea",
-                            type: "idea",
-                            tags: ["business", "local", "Montana"],
-                            contentMarkdown: "Ranch families, farm stands, trades, and small-town hospitality need branding & digital presence. Low competition + high word-of-mouth."
-                        },
-                        {
-                            title: "ADHD Pattern: Too Many Tabs",
-                            type: "insight",
-                            tags: ["ADHD", "focus"],
-                            contentMarkdown: "When overwhelmed, I open 10 mental tabs. The first 3 minutes of any task are the hardest."
-                        },
-                        {
-                            title: "Sagebrush & Steel Identity Anchor",
+                            title: "Book Notes: Building a Second Brain",
                             type: "reference",
-                            tags: ["branding", "SagebrushAndSteel"],
-                            contentMarkdown: "Sagebrush & Steel = rugged softness, industrial warmth, Montana roots + modern clarity. Cohesive contrast."
+                            tags: ["knowledge-management", "productivity", "books"],
+                            area: "personal",
+                            context: "book",
+                            contentMarkdown: `**Book:** Building a Second Brain
+**Author:** Tiago Forte
+
+## Key Takeaways
+
+The best way to organize information is by **actionability**, not by category.
+
+CODE framework:
+- Capture what resonates
+- Organize by actionability
+- Distill to the essence
+- Express your ideas
+
+## How I'll Apply This
+
+Start organizing notes by project instead of topic. Ask "when will I need this?" instead of "what category is this?"
+
+## One Thing I'll Try
+
+Create project-based folders and move active ideas into them this week.`
+                        },
+                        {
+                            title: "Client Insight: They Don't Want Perfection",
+                            type: "insight",
+                            tags: ["client-management", "business", "expectations"],
+                            area: "business",
+                            context: "client work",
+                            contentMarkdown: "I used to overthink deliverables. Then I realized: clients don't want perfect—they want **progress**. They want to feel heard and see movement. When I shifted to iterative check-ins instead of \"big reveal\" moments, everything got smoother."
+                        },
+                        {
+                            title: "Decision: When to Say No to Projects",
+                            type: "decision",
+                            tags: ["boundaries", "pricing", "business"],
+                            area: "business",
+                            contentMarkdown: `**Decision:** Only take projects if at least 2 of these are true:
+1. Excited about the work
+2. Good pay
+3. Portfolio piece
+4. Strategic relationship
+
+**Why:** Too many resentment jobs in 2023.
+
+**Expected Outcome:** Better energy, better work, better clients.
+
+**What to Watch For:** Am I saying yes out of fear?`
+                        },
+                        {
+                            title: "Learning: Humor Beats Polish in Content",
+                            type: "learning",
+                            tags: ["content", "social-media", "authenticity"],
+                            area: "creative",
+                            context: "personal experience",
+                            contentMarkdown: `**What I Learned:** The posts that perform best aren't the polished ones—they're the honest, slightly messy, funny ones.
+
+**Where This Came From:** 3 months of Instagram experiments.
+
+**How to Use It:** Stop overthinking captions. Write like I'm texting a friend.
+
+**What Gets in the Way:** Perfectionism and imposter syndrome.`
+                        },
+                        {
+                            title: "What I Know About Client Boundaries",
+                            type: "insight",
+                            tags: ["client-management", "boundaries", "super-note"],
+                            area: "business",
+                            contentMarkdown: `This is a synthesis of everything I've learned about managing client expectations.
+
+## The Pattern
+
+Clients push boundaries when boundaries aren't clear. It's not malicious—it's human.
+
+## What Works
+
+1. **Set revision limits upfront** (and stick to them)
+2. **Define scope in writing** before starting
+3. **Repeat the boundaries** during kickoff
+4. **Respond to scope creep immediately**, not later
+
+## What Doesn't Work
+
+- Assuming they'll "just know"
+- Being vague to seem flexible
+- Letting small things slide
+
+## The Reminder
+
+Boundaries aren't mean. They're the thing that lets you do great work without burning out.`,
+                            linksTo: []
                         }
                     ];
 
                     const now = new Date().toISOString();
-                    this.state.notes = sampleNotes.map((note, index) => ({
+                    this.state.notes = sampleNotes.map((note) => ({
                         id: this.generateId(),
                         title: note.title,
                         contentMarkdown: note.contentMarkdown,
                         contentHtml: this.markdownToHtml(note.contentMarkdown),
-                        type: note.type || 'insight',
+                        type: note.type,
                         tags: note.tags || [],
                         project: note.project || '',
                         goal: note.goal || '',
@@ -1140,7 +1219,7 @@
                         source: note.source || '',
                         dateCaptured: now,
                         lastUpdated: now,
-                        linksTo: [],
+                        linksTo: note.linksTo || [],
                         favorite: false,
                         keyInsight: false,
                         status: 'processed',
@@ -1156,80 +1235,122 @@
                 return Date.now().toString(36) + Math.random().toString(36).substr(2);
             },
 
+            toggleDarkMode() {
+                this.state.settings.darkMode = !this.state.settings.darkMode;
+                this.applyDarkMode();
+                this.saveState();
+            },
+
+            applyDarkMode() {
+                if (this.state.settings.darkMode) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            },
+
             setupEventListeners() {
-                // Tag input
                 const tagInput = document.getElementById('tag-input');
                 if (tagInput) {
                     tagInput.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter' || e.key === ',') {
                             e.preventDefault();
-                            this.addTag(tagInput.value.trim());
-                            tagInput.value = '';
+                            const value = tagInput.value.trim().replace(/,/g, '');
+                            if (value) {
+                                this.addTag(value);
+                                tagInput.value = '';
+                            }
                         }
                     });
 
-                    // Auto-suggest on input
                     tagInput.addEventListener('input', () => {
                         this.updateTagSuggestions(tagInput.value);
                     });
                 }
 
-                // Content preview
                 const contentTextarea = document.getElementById('note-content');
                 if (contentTextarea) {
                     contentTextarea.addEventListener('input', () => {
                         this.updateContentPreview();
+                        this.updateTagSuggestions('');
                     });
                 }
 
-                // Set current date
                 const dateInput = document.getElementById('note-date');
                 if (dateInput && !dateInput.value) {
                     dateInput.value = new Date().toISOString().split('T')[0];
                 }
             },
 
-            // Markdown Parser
             markdownToHtml(markdown) {
                 let html = markdown;
 
+                // Escape HTML
+                const escapeMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;' };
+                html = html.replace(/[&<>]/g, m => escapeMap[m] || m);
+
                 // Headers
-                html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-                html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
-                html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+                html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+                html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+                html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
 
                 // Bold
                 html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
                 // Italic
-                html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+                html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
 
                 // Links
-                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+                html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
 
                 // Inline code
-                html = html.replace(/`(.+?)`/g, '<code>$1</code>');
+                html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
 
-                // Lists
-                html = html.replace(/^\* (.+)$/gim, '<li>$1</li>');
-                html = html.replace(/^- (.+)$/gim, '<li>$1</li>');
-                html = html.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+                // Lists - unordered
+                const lines = html.split('\n');
+                let inList = false;
+                let result = [];
 
-                // Numbered lists
-                html = html.replace(/^\d+\. (.+)$/gim, '<li>$1</li>');
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (/^[*-] (.+)/.test(line)) {
+                        if (!inList) {
+                            result.push('<ul>');
+                            inList = true;
+                        }
+                        result.push(line.replace(/^[*-] (.+)/, '<li>$1</li>'));
+                    } else if (/^\d+\. (.+)/.test(line)) {
+                        if (!inList) {
+                            result.push('<ol>');
+                            inList = 'ol';
+                        }
+                        result.push(line.replace(/^\d+\. (.+)/, '<li>$1</li>'));
+                    } else {
+                        if (inList) {
+                            result.push(inList === 'ol' ? '</ol>' : '</ul>');
+                            inList = false;
+                        }
+                        result.push(line);
+                    }
+                }
+
+                if (inList) {
+                    result.push(inList === 'ol' ? '</ol>' : '</ul>');
+                }
+
+                html = result.join('\n');
 
                 // Paragraphs
                 html = html.split('\n\n').map(para => {
-                    if (!para.startsWith('<') && para.trim()) {
-                        return `<p>${para}</p>`;
-                    }
-                    return para;
+                    para = para.trim();
+                    if (!para) return '';
+                    if (para.startsWith('<')) return para;
+                    return `<p>${para.replace(/\n/g, '<br>')}</p>`;
                 }).join('\n');
 
                 return html;
             },
 
-            // Tag Management
             addTag(tag) {
                 if (tag && !this.state.editingTags.includes(tag)) {
                     this.state.editingTags.push(tag);
@@ -1244,53 +1365,61 @@
 
             renderTagInput() {
                 const container = document.getElementById('tag-container');
-                const input = document.getElementById('tag-input');
+                if (!container) return;
 
+                const input = document.getElementById('tag-input');
                 container.innerHTML = '';
 
                 this.state.editingTags.forEach(tag => {
                     const tagEl = document.createElement('span');
                     tagEl.className = 'tag-item';
-                    tagEl.innerHTML = `${tag} <span class="tag-remove" onclick="app.removeTag('${tag}')">×</span>`;
+                    tagEl.innerHTML = `${this.escapeHtml(tag)} <span class="tag-remove" onclick="app.removeTag('${this.escapeHtml(tag)}')">×</span>`;
                     container.appendChild(tagEl);
                 });
 
                 container.appendChild(input);
             },
 
-            // Auto-suggest tags
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            },
+
             updateTagSuggestions(input) {
                 const allTags = new Set();
                 this.state.notes.forEach(note => {
                     note.tags.forEach(tag => allTags.add(tag));
                 });
 
-                // Get keywords from content
-                const content = document.getElementById('note-content').value;
-                const keywords = this.extractKeywords(content);
+                const content = document.getElementById('note-content')?.value || '';
+                const title = document.getElementById('note-title')?.value || '';
+                const keywords = this.extractKeywords(content + ' ' + title);
 
-                const suggested = [...keywords, ...allTags].filter(tag =>
+                const suggested = [...new Set([...keywords, ...allTags])].filter(tag =>
                     !this.state.editingTags.includes(tag) &&
-                    tag.toLowerCase().includes(input.toLowerCase())
-                ).slice(0, 10);
+                    (!input || tag.toLowerCase().includes(input.toLowerCase()))
+                ).slice(0, 8);
 
                 this.renderTagSuggestions(suggested);
             },
 
             extractKeywords(text) {
                 const keywords = new Set();
+                const lower = text.toLowerCase();
 
-                // Capitalized words (names, companies)
+                // Capitalized words
                 const caps = text.match(/\b[A-Z][a-z]+\b/g) || [];
-                caps.forEach(word => keywords.add(word.toLowerCase()));
+                caps.forEach(word => {
+                    if (word.length > 3) keywords.add(word.toLowerCase());
+                });
 
                 // Common themes
                 const themes = ['strategy', 'creativity', 'productivity', 'client', 'branding',
-                               'money', 'design', 'marketing', 'business', 'content'];
+                               'money', 'design', 'marketing', 'business', 'content', 'systems',
+                               'boundaries', 'pricing', 'energy', 'focus', 'clarity'];
                 themes.forEach(theme => {
-                    if (text.toLowerCase().includes(theme)) {
-                        keywords.add(theme);
-                    }
+                    if (lower.includes(theme)) keywords.add(theme);
                 });
 
                 return Array.from(keywords);
@@ -1298,6 +1427,8 @@
 
             renderTagSuggestions(tags) {
                 const container = document.getElementById('suggested-tags-container');
+                if (!container) return;
+
                 if (tags.length === 0) {
                     container.innerHTML = '';
                     return;
@@ -1305,42 +1436,90 @@
 
                 container.innerHTML = `
                     <div class="auto-suggest">
-                        <div class="auto-suggest-title">Suggested tags:</div>
+                        <div class="auto-suggest-title">Suggested:</div>
                         <div class="suggested-tags">
                             ${tags.map(tag => `
-                                <span class="suggested-tag" onclick="app.addTag('${tag}')">${tag}</span>
+                                <span class="suggested-tag" onclick="app.addTag('${this.escapeHtml(tag)}')">${this.escapeHtml(tag)}</span>
                             `).join('')}
                         </div>
                     </div>
                 `;
             },
 
-            // Templates
             applyTemplate(type) {
                 const templates = {
-                    blank: {
-                        title: '',
-                        content: ''
-                    },
+                    blank: { title: '', content: '' },
                     idea: {
                         title: 'New Idea',
-                        content: '## The Idea\n\n## Why This Matters\n\n## Next Steps\n'
+                        content: `## The Idea
+
+## Why This Matters
+
+## Where It Fits
+(Project/goal?)
+
+## Next Step
+(One tiny action)`
+                    },
+                    learning: {
+                        title: 'Something I Learned',
+                        content: `## What I Learned
+
+## Where This Came From
+
+## How/Where to Use It
+
+## What Gets in the Way`
                     },
                     decision: {
                         title: 'Decision Log',
-                        content: '**Decision:** \n\n**Context:** \n\n**Outcome:** \n\n**Date:** '
-                    },
-                    learning: {
-                        title: 'Learning',
-                        content: '## What I Learned\n\n## How to Apply It\n\n## Related Concepts\n'
+                        content: `**Decision:**
+
+**Options I Considered:**
+
+**Why I Chose This:**
+
+**Expected Outcome:**
+
+**What to Watch For:**`
                     },
                     book: {
                         title: 'Book Notes',
-                        content: '**Book:** \n**Author:** \n**Date Read:** \n\n## Key Takeaways\n\n## Quotes\n\n## Action Items\n'
+                        content: `**Book:**
+**Author:**
+**Date Read:**
+
+## Key Takeaways
+
+## Quotes Worth Keeping
+
+## How to Apply This
+
+## One Thing I'll Try`
                     },
                     meeting: {
                         title: 'Meeting Notes',
-                        content: '**Date:** \n**Attendees:** \n**Purpose:** \n\n## Discussion\n\n## Decisions\n\n## Action Items\n'
+                        content: `**Date:**
+**Who Was There:**
+**Purpose:**
+
+## What We Talked About
+
+## Decisions Made
+
+## Action Items
+
+## Follow-Ups`
+                    },
+                    voice: {
+                        title: 'Voice Note – ' + new Date().toLocaleString(),
+                        content: `🎤 **This was a voice note.**
+
+Transcribe it here when you're ready, or just capture the main points.
+
+## Key Points
+
+## What to Do With This`
                     }
                 };
 
@@ -1349,17 +1528,24 @@
                 document.getElementById('note-content').value = template.content;
 
                 if (type !== 'blank') {
-                    document.getElementById('note-type').value = type === 'book' || type === 'meeting' ? 'reference' : type;
+                    const typeMap = {
+                        'book': 'reference',
+                        'meeting': 'reference',
+                        'voice': 'idea'
+                    };
+                    document.getElementById('note-type').value = typeMap[type] || type;
                 }
 
                 this.updateContentPreview();
+                this.updateTagSuggestions('');
             },
 
-            // Preview Toggle
             togglePreview(mode) {
                 const textarea = document.getElementById('note-content');
                 const preview = document.getElementById('content-preview');
                 const buttons = document.querySelectorAll('.preview-toggle button');
+
+                if (!textarea || !preview) return;
 
                 buttons.forEach(btn => btn.classList.remove('active'));
 
@@ -1376,13 +1562,14 @@
             },
 
             updateContentPreview() {
-                const content = document.getElementById('note-content').value;
+                const content = document.getElementById('note-content')?.value || '';
                 const preview = document.getElementById('content-preview');
-                preview.innerHTML = this.markdownToHtml(content);
+                if (preview) {
+                    preview.innerHTML = this.markdownToHtml(content);
+                }
             },
 
-            // Note CRUD
-            showCaptureModal(noteId = null) {
+            showCaptureModal(noteId = null, templateType = null) {
                 const modal = document.getElementById('capture-modal');
                 const form = document.getElementById('note-form');
 
@@ -1398,7 +1585,6 @@
                         document.getElementById('note-title').value = note.title;
                         document.getElementById('note-content').value = note.contentMarkdown;
                         document.getElementById('note-type').value = note.type;
-                        document.getElementById('note-status').value = note.status;
                         document.getElementById('note-project').value = note.project || '';
                         document.getElementById('note-goal').value = note.goal || '';
                         document.getElementById('note-area').value = note.area || '';
@@ -1411,12 +1597,21 @@
                         this.renderTagInput();
                     }
                 } else {
-                    document.getElementById('modal-title').textContent = 'Capture New Note';
+                    document.getElementById('modal-title').textContent = 'What did your brain bump into today?';
                     document.getElementById('note-date').value = new Date().toISOString().split('T')[0];
+                    document.getElementById('note-type').value = this.state.settings.defaultType || 'idea';
+                    document.getElementById('note-area').value = this.state.settings.defaultArea || '';
+
+                    if (templateType) {
+                        this.applyTemplate(templateType);
+                    }
                 }
 
                 this.updateDataLists();
                 modal.classList.add('active');
+                setTimeout(() => {
+                    document.getElementById('note-title')?.focus();
+                }, 100);
             },
 
             closeCaptureModal() {
@@ -1426,20 +1621,16 @@
             updateDataLists() {
                 const projects = new Set();
                 const goals = new Set();
-                const areas = new Set();
 
                 this.state.notes.forEach(note => {
                     if (note.project) projects.add(note.project);
                     if (note.goal) goals.add(note.goal);
-                    if (note.area) areas.add(note.area);
                 });
 
                 document.getElementById('projects-list').innerHTML =
-                    Array.from(projects).map(p => `<option value="${p}">`).join('');
+                    Array.from(projects).map(p => `<option value="${this.escapeHtml(p)}">`).join('');
                 document.getElementById('goals-list').innerHTML =
-                    Array.from(goals).map(g => `<option value="${g}">`).join('');
-                document.getElementById('areas-list').innerHTML =
-                    Array.from(areas).map(a => `<option value="${a}">`).join('');
+                    Array.from(goals).map(g => `<option value="${this.escapeHtml(g)}">`).join('');
             },
 
             saveNote(event) {
@@ -1449,7 +1640,6 @@
                 const title = document.getElementById('note-title').value;
                 const contentMarkdown = document.getElementById('note-content').value;
                 const type = document.getElementById('note-type').value;
-                const status = document.getElementById('note-status').value;
                 const project = document.getElementById('note-project').value;
                 const goal = document.getElementById('note-goal').value;
                 const area = document.getElementById('note-area').value;
@@ -1464,7 +1654,7 @@
                     contentMarkdown,
                     contentHtml: this.markdownToHtml(contentMarkdown),
                     type,
-                    tags: this.state.editingTags,
+                    tags: [...this.state.editingTags],
                     project,
                     goal,
                     area,
@@ -1474,35 +1664,40 @@
                     lastUpdated: new Date().toISOString(),
                     favorite,
                     keyInsight,
-                    status,
-                    linksTo: [],
+                    status: 'unprocessed',
                     repetitionCount: 0,
                     patternFlags: []
                 };
 
                 if (id) {
-                    // Update existing note
                     const index = this.state.notes.findIndex(n => n.id === id);
                     if (index !== -1) {
+                        noteData.linksTo = this.state.notes[index].linksTo || [];
                         this.state.notes[index] = { ...this.state.notes[index], ...noteData };
                     }
                 } else {
-                    // Create new note
                     noteData.id = this.generateId();
+                    noteData.linksTo = [];
                     this.state.notes.unshift(noteData);
                 }
 
-                // Detect patterns
                 this.detectPatterns(noteData);
-
                 this.saveState();
                 this.closeCaptureModal();
                 this.render();
             },
 
             deleteNote(id) {
-                if (confirm('Are you sure you want to delete this note?')) {
+                if (confirm('Delete this note? (You can\'t undo this)')) {
                     this.state.notes = this.state.notes.filter(n => n.id !== id);
+
+                    // Remove from other notes' linksTo
+                    this.state.notes.forEach(note => {
+                        if (note.linksTo && note.linksTo.includes(id)) {
+                            note.linksTo = note.linksTo.filter(linkId => linkId !== id);
+                        }
+                    });
+
                     this.saveState();
                     this.render();
                     this.closeDetailModal();
@@ -1514,11 +1709,29 @@
                 if (note) {
                     note.favorite = !note.favorite;
                     this.saveState();
+
+                    // Update just the star without full re-render
+                    const stars = document.querySelectorAll(`[onclick*="toggleFavorite('${id}')"]`);
+                    stars.forEach(star => {
+                        if (note.favorite) {
+                            star.classList.add('active');
+                        } else {
+                            star.classList.remove('active');
+                        }
+                    });
+                }
+            },
+
+            markProcessed(id) {
+                const note = this.state.notes.find(n => n.id === id);
+                if (note) {
+                    note.status = 'processed';
+                    note.lastUpdated = new Date().toISOString();
+                    this.saveState();
                     this.render();
                 }
             },
 
-            // Pattern Detection
             detectPatterns(newNote) {
                 const similar = this.state.notes.filter(note => {
                     if (note.id === newNote.id) return false;
@@ -1530,26 +1743,26 @@
                         newNote.contentMarkdown.substring(0, 200)
                     );
 
-                    return sharedTags.length >= 2 || titleSimilarity > 0.5 || contentSimilarity > 0.5;
+                    return sharedTags.length >= 2 || titleSimilarity > 0.5 || contentSimilarity > 0.4;
                 });
 
                 if (similar.length > 0) {
                     const note = this.state.notes.find(n => n.id === newNote.id);
                     if (note) {
-                        note.repetitionCount = (note.repetitionCount || 0) + 1;
+                        note.repetitionCount = similar.length;
                         note.patternFlags = similar.map(n => n.id);
                     }
                 }
             },
 
             calculateSimilarity(str1, str2) {
+                if (!str1 || !str2) return 0;
                 const words1 = str1.toLowerCase().split(/\s+/);
                 const words2 = str2.toLowerCase().split(/\s+/);
-                const common = words1.filter(word => words2.includes(word));
-                return common.length / Math.max(words1.length, words2.length);
+                const common = words1.filter(word => word.length > 3 && words2.includes(word));
+                return common.length / Math.max(words1.length, words2.length, 1);
             },
 
-            // Related Notes
             getRelatedNotes(noteId, limit = 5) {
                 const note = this.state.notes.find(n => n.id === noteId);
                 if (!note) return [];
@@ -1570,128 +1783,121 @@
             calculateRelatedness(note1, note2) {
                 let score = 0;
 
-                // Shared tags
                 const sharedTags = note1.tags.filter(tag => note2.tags.includes(tag));
-                score += sharedTags.length * 3;
+                score += sharedTags.length * 5;
 
-                // Same type
                 if (note1.type === note2.type) score += 2;
+                if (note1.project && note1.project === note2.project) score += 8;
+                if (note1.goal && note1.goal === note2.goal) score += 6;
+                if (note1.area === note2.area && note1.area) score += 1;
 
-                // Same project
-                if (note1.project && note1.project === note2.project) score += 5;
-
-                // Same goal
-                if (note1.goal && note1.goal === note2.goal) score += 4;
-
-                // Content similarity
                 const contentSim = this.calculateSimilarity(note1.contentMarkdown, note2.contentMarkdown);
                 score += contentSim * 10;
 
                 return score;
             },
 
-            // Search
+            getLinkedFrom(noteId) {
+                return this.state.notes.filter(note =>
+                    note.linksTo && note.linksTo.includes(noteId)
+                );
+            },
+
             searchNotes(query, filters = {}) {
                 let results = this.state.notes;
 
                 if (query) {
                     query = query.toLowerCase();
-                    results = results.filter(note => {
+                    results = results.map(note => {
                         let score = 0;
+                        const titleLower = note.title.toLowerCase();
+                        const contentLower = note.contentMarkdown.toLowerCase();
+                        const firstLines = contentLower.substring(0, 200);
 
-                        if (note.title.toLowerCase().includes(query)) score += 10;
-                        if (note.tags.some(tag => tag.toLowerCase().includes(query))) score += 5;
-                        if (note.contentMarkdown.toLowerCase().includes(query)) score += 1;
+                        // Semantic scoring
+                        if (titleLower.includes(query)) score += 10;
+                        if (note.tags.some(tag => tag.toLowerCase().includes(query))) score += 8;
+                        if (firstLines.includes(query)) score += 5;
+                        if (contentLower.includes(query)) score += 2;
+                        if (note.project && note.project.toLowerCase().includes(query)) score += 6;
+                        if (note.goal && note.goal.toLowerCase().includes(query)) score += 6;
 
-                        return score > 0;
-                    });
+                        return { note, score };
+                    }).filter(item => item.score > 0)
+                      .sort((a, b) => b.score - a.score)
+                      .map(item => item.note);
                 }
 
-                if (filters.type) {
-                    results = results.filter(n => n.type === filters.type);
-                }
-
-                if (filters.project) {
-                    results = results.filter(n => n.project === filters.project);
-                }
-
-                if (filters.goal) {
-                    results = results.filter(n => n.goal === filters.goal);
-                }
-
-                if (filters.tag) {
-                    results = results.filter(n => n.tags.includes(filters.tag));
-                }
-
-                if (filters.favorite) {
-                    results = results.filter(n => n.favorite);
-                }
+                if (filters.type) results = results.filter(n => n.type === filters.type);
+                if (filters.project) results = results.filter(n => n.project === filters.project);
+                if (filters.goal) results = results.filter(n => n.goal === filters.goal);
+                if (filters.tag) results = results.filter(n => n.tags.includes(filters.tag));
+                if (filters.favorite) results = results.filter(n => n.favorite);
+                if (filters.area) results = results.filter(n => n.area === filters.area);
+                if (filters.status) results = results.filter(n => n.status === filters.status);
 
                 return results;
             },
 
-            // Views
             switchView(view) {
                 this.state.currentView = view;
 
-                // Update nav
                 document.querySelectorAll('.nav-btn').forEach(btn => {
                     btn.classList.remove('active');
                 });
-                event.target.classList.add('active');
+
+                const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(btn =>
+                    btn.textContent.toLowerCase().includes(view.toLowerCase().split('-')[0])
+                );
+                if (activeBtn) activeBtn.classList.add('active');
 
                 this.render();
             },
 
             render() {
                 const main = document.getElementById('main-content');
+                if (!main) return;
 
-                switch (this.state.currentView) {
-                    case 'notes':
-                        main.innerHTML = this.renderNotesView();
-                        break;
-                    case 'timeline':
-                        main.innerHTML = this.renderTimelineView();
-                        break;
-                    case 'tags':
-                        main.innerHTML = this.renderTagCloudView();
-                        break;
-                    case 'projects':
-                        main.innerHTML = this.renderProjectsView();
-                        break;
-                    case 'goals':
-                        main.innerHTML = this.renderGoalsView();
-                        break;
-                    case 'reading':
-                        main.innerHTML = this.renderReadingListView();
-                        break;
-                    case 'someday':
-                        main.innerHTML = this.renderSomedayView();
-                        break;
-                }
+                const views = {
+                    'home': () => this.renderHomeView(),
+                    'all': () => this.renderAllNotesView(),
+                    'unprocessed': () => this.renderUnprocessedView(),
+                    'timeline': () => this.renderTimelineView(),
+                    'projects': () => this.renderProjectsView(),
+                    'tags': () => this.renderTagCloudView(),
+                    'review': () => this.renderReviewView(),
+                    'review-weekly': () => this.renderWeeklyReview(),
+                    'review-monthly': () => this.renderMonthlyReview(),
+                    'review-quarterly': () => this.renderQuarterlyReview(),
+                    'review-random': () => this.renderRandomNote(),
+                    'reading': () => this.renderReadingListView(),
+                    'someday': () => this.renderSomedayView(),
+                    'settings': () => this.renderSettingsView()
+                };
+
+                const renderFn = views[this.state.currentView] || views['home'];
+                main.innerHTML = renderFn();
             },
 
-            renderNotesView() {
-                const notes = this.state.notes;
-
-                if (notes.length === 0) {
-                    return `
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📝</div>
-                            <h2>No notes yet</h2>
-                            <p>Capture your first insight, idea, or learning!</p>
-                            <button class="btn btn-primary mt-2" onclick="app.showCaptureModal()">Create Note</button>
-                        </div>
-                    `;
-                }
-
+            renderHomeView() {
                 const stats = this.getStats();
+                const recentNotes = this.state.notes.slice(0, 5);
+                const unprocessedCount = this.state.notes.filter(n => n.status === 'unprocessed').length;
+                const patterns = this.state.notes.filter(n => n.repetitionCount > 2);
 
                 return `
+                    ${this.state.settings.showDailyCapture ? `
+                    <div class="daily-capture">
+                        <h2>What did your brain bump into today?</h2>
+                        <p>Don't just collect ideas — use them.</p>
+                        <button class="btn btn-secondary" onclick="app.showCaptureModal()">Capture Something</button>
+                    </div>
+                    ` : ''}
+
                     <div class="stats">
                         <div class="stat-card">
                             <div class="stat-value">${stats.total}</div>
-                            <div class="stat-label">Total Notes</div>
+                            <div class="stat-label">Notes</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value">${stats.insights}</div>
@@ -1702,51 +1908,131 @@
                             <div class="stat-label">Ideas</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-value">${stats.decisions}</div>
-                            <div class="stat-label">Decisions</div>
+                            <div class="stat-value">${unprocessedCount}</div>
+                            <div class="stat-label">Need Love</div>
                         </div>
                     </div>
 
+                    ${patterns.length > 0 ? `
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">🔄 Patterns You Keep Seeing</h3>
+                        <p class="text-muted mb-2">Maybe it's time to implement these instead of just capturing them?</p>
+                        ${patterns.slice(0, 3).map(note => `
+                            <div class="link-item" onclick="app.showNoteDetail('${note.id}')">
+                                <strong>${note.title}</strong>
+                                <div class="text-muted" style="font-size: 0.85rem;">Captured ${note.repetitionCount} times</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    ` : ''}
+
+                    ${unprocessedCount > 0 ? `
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">📝 Notes That Need Love</h3>
+                        <p class="text-muted mb-2">${unprocessedCount} notes waiting to be tagged and processed.</p>
+                        <button class="btn btn-outline btn-small" onclick="app.switchView('unprocessed')">Process Them</button>
+                    </div>
+                    ` : ''}
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">Recent Captures</h3>
+                        ${recentNotes.length === 0 ?
+                            '<p class="text-muted">No notes yet. Time to capture something!</p>' :
+                            recentNotes.map(note => this.renderNoteCard(note)).join('')
+                        }
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="card card-clickable" onclick="app.switchView('review-random')">
+                            <h3>🎲 Random Note</h3>
+                            <p class="text-muted">Resurface something you forgot</p>
+                        </div>
+                        <div class="card card-clickable" onclick="app.switchView('review-weekly')">
+                            <h3>📅 This Week</h3>
+                            <p class="text-muted">What you captured lately</p>
+                        </div>
+                        <div class="card card-clickable" onclick="app.switchView('projects')">
+                            <h3>📁 Projects</h3>
+                            <p class="text-muted">Organize by what you're working on</p>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderAllNotesView() {
+                const notes = this.state.notes;
+
+                return `
                     <div class="search-container">
                         <div class="search-box">
-                            <input type="text" class="search-input" placeholder="Search notes..."
+                            <input type="text" class="search-input" placeholder="Search your brain..."
                                    onkeyup="app.handleSearch(event)">
                         </div>
                     </div>
 
-                    ${notes.map(note => this.renderNoteCard(note)).join('')}
+                    ${notes.length === 0 ? `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🧠</div>
+                            <h2>Your brain is empty</h2>
+                            <p>Just kidding. But this database is. Capture something!</p>
+                            <button class="btn btn-primary mt-2" onclick="app.showCaptureModal()">Add First Note</button>
+                        </div>
+                    ` : notes.map(note => this.renderNoteCard(note)).join('')}
                 `;
             },
 
-            renderNoteCard(note) {
+            renderUnprocessedView() {
+                const unprocessed = this.state.notes.filter(n => n.status === 'unprocessed');
+
+                return `
+                    <h2 style="margin-bottom: 1rem;">Notes That Need Love</h2>
+                    <p class="text-muted mb-3">Add tags, link them to projects, or just review and mark as processed.</p>
+
+                    ${unprocessed.length === 0 ? `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">✅</div>
+                            <h2>All caught up!</h2>
+                            <p>Every note has been processed. Future you says thanks.</p>
+                        </div>
+                    ` : unprocessed.map(note => this.renderNoteCard(note, true)).join('')}
+                `;
+            },
+
+            renderNoteCard(note, showProcessButton = false) {
                 const preview = note.contentMarkdown.substring(0, 150) + (note.contentMarkdown.length > 150 ? '...' : '');
 
                 return `
                     <div class="card card-clickable note-card" onclick="app.showNoteDetail('${note.id}')">
                         <div class="note-header">
                             <div style="flex: 1;">
-                                <div class="note-title">${note.title}</div>
+                                <div class="note-title">${this.escapeHtml(note.title)}</div>
                                 <div class="note-meta">
                                     <span class="note-type type-${note.type}">${note.type}</span>
-                                    ${note.project ? `<span>📁 ${note.project}</span>` : ''}
-                                    ${note.goal ? `<span>🎯 ${note.goal}</span>` : ''}
+                                    ${note.project ? `<span>📁 ${this.escapeHtml(note.project)}</span>` : ''}
+                                    ${note.goal ? `<span>🎯 ${this.escapeHtml(note.goal)}</span>` : ''}
                                     <span>${new Date(note.dateCaptured).toLocaleDateString()}</span>
                                 </div>
                             </div>
                             <span class="favorite-star ${note.favorite ? 'active' : ''}"
                                   onclick="event.stopPropagation(); app.toggleFavorite('${note.id}')">★</span>
                         </div>
-                        <div class="note-content note-content-preview">${preview}</div>
+                        <div class="note-content note-content-preview">${this.escapeHtml(preview)}</div>
                         ${note.tags.length > 0 ? `
                             <div class="tags">
-                                ${note.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                ${note.tags.map(tag => `<span class="tag" onclick="event.stopPropagation(); app.filterByTag('${this.escapeHtml(tag)}')">${this.escapeHtml(tag)}</span>`).join('')}
                             </div>
                         ` : ''}
                         ${note.repetitionCount > 2 ? `
                             <div class="pattern-alert mt-2">
-                                <div class="pattern-alert-title">🔄 Pattern Detected</div>
-                                <p>You've captured this pattern ${note.repetitionCount} times.</p>
+                                <div class="pattern-alert-title">🔄 You've seen this ${note.repetitionCount} times</div>
+                                <p>Maybe it's time to actually do something about it?</p>
                             </div>
+                        ` : ''}
+                        ${showProcessButton ? `
+                            <button class="btn btn-small btn-outline mt-2"
+                                    onclick="event.stopPropagation(); app.markProcessed('${note.id}')">
+                                ✓ Mark Processed
+                            </button>
                         ` : ''}
                     </div>
                 `;
@@ -1757,20 +2043,22 @@
                 if (!note) return;
 
                 const related = this.getRelatedNotes(noteId);
+                const linkedFrom = this.getLinkedFrom(noteId);
+                const linkedTo = note.linksTo ? this.state.notes.filter(n => note.linksTo.includes(n.id)) : [];
 
                 const modal = document.getElementById('detail-modal');
                 const content = document.getElementById('detail-content');
 
                 content.innerHTML = `
                     <div class="modal-header">
-                        <h2 class="modal-title">${note.title}</h2>
+                        <h2 class="modal-title">${this.escapeHtml(note.title)}</h2>
                         <button class="modal-close" onclick="app.closeDetailModal()">×</button>
                     </div>
 
                     <div class="note-meta mb-2">
                         <span class="note-type type-${note.type}">${note.type}</span>
-                        ${note.project ? `<span>📁 ${note.project}</span>` : ''}
-                        ${note.goal ? `<span>🎯 ${note.goal}</span>` : ''}
+                        ${note.project ? `<span>📁 ${this.escapeHtml(note.project)}</span>` : ''}
+                        ${note.goal ? `<span>🎯 ${this.escapeHtml(note.goal)}</span>` : ''}
                         ${note.area ? `<span>📍 ${note.area}</span>` : ''}
                         <span>${new Date(note.dateCaptured).toLocaleDateString()}</span>
                         <span class="favorite-star ${note.favorite ? 'active' : ''}"
@@ -1779,14 +2067,14 @@
 
                     ${note.tags.length > 0 ? `
                         <div class="tags mb-3">
-                            ${note.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            ${note.tags.map(tag => `<span class="tag" onclick="app.filterByTag('${this.escapeHtml(tag)}')">${this.escapeHtml(tag)}</span>`).join('')}
                         </div>
                     ` : ''}
 
                     ${note.repetitionCount > 2 ? `
                         <div class="pattern-alert">
                             <div class="pattern-alert-title">🔄 Pattern Detected</div>
-                            <p>You've captured this pattern ${note.repetitionCount} times. Consider turning this into an action or decision.</p>
+                            <p>You've captured something like this ${note.repetitionCount} times. Consider turning this into an action or decision.</p>
                             <button class="btn btn-small btn-primary mt-1" onclick="app.createActionFromPattern('${note.id}')">
                                 Turn into Action
                             </button>
@@ -1800,15 +2088,42 @@
                     ${note.context ? `<p class="mt-2"><strong>Context:</strong> ${note.context}</p>` : ''}
                     ${note.source ? `<p><strong>Source:</strong> ${note.source}</p>` : ''}
 
+                    ${linkedTo.length > 0 || linkedFrom.length > 0 ? `
+                        <div class="note-links-section">
+                            <h3 style="margin-bottom: 1rem;">🔗 Connected Notes</h3>
+                            ${linkedTo.length > 0 ? `
+                                <div style="margin-bottom: 1rem;">
+                                    <strong>Links to:</strong>
+                                    ${linkedTo.map(n => `
+                                        <div class="link-item" onclick="app.showNoteDetail('${n.id}')">
+                                            ${this.escapeHtml(n.title)}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                            ${linkedFrom.length > 0 ? `
+                                <div>
+                                    <strong>Linked from:</strong>
+                                    ${linkedFrom.map(n => `
+                                        <div class="link-item" onclick="app.showNoteDetail('${n.id}')">
+                                            ${this.escapeHtml(n.title)}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+
                     ${related.length > 0 ? `
                         <div class="related-notes">
                             <h3>Related Notes</h3>
+                            <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1rem;">Based on shared tags, projects, and topics</p>
                             ${related.map(r => `
                                 <div class="related-note-item" onclick="app.showNoteDetail('${r.id}')">
-                                    <div style="font-weight: 600; margin-bottom: 0.25rem;">${r.title}</div>
+                                    <div style="font-weight: 600; margin-bottom: 0.25rem;">${this.escapeHtml(r.title)}</div>
                                     <div style="font-size: 0.85rem; color: var(--text-light);">
                                         <span class="note-type type-${r.type}">${r.type}</span>
-                                        ${r.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                        ${r.tags.slice(0, 3).map(tag => `<span class="tag">${this.escapeHtml(tag)}</span>`).join('')}
                                     </div>
                                 </div>
                             `).join('')}
@@ -1816,9 +2131,13 @@
                     ` : ''}
 
                     <div class="modal-actions">
-                        <button class="btn btn-outline" onclick="app.exportNoteMarkdown('${note.id}')">Export MD</button>
-                        <button class="btn btn-outline" onclick="app.showCaptureModal('${note.id}')">Edit</button>
-                        <button class="btn btn-secondary" onclick="app.deleteNote('${note.id}')">Delete</button>
+                        <button class="btn btn-outline btn-small" onclick="app.showLinkModal('${note.id}')">🔗 Link Notes</button>
+                        <button class="btn btn-outline btn-small" onclick="app.exportNoteMarkdown('${note.id}')">📄 Export</button>
+                        <button class="btn btn-outline btn-small" onclick="app.showCaptureModal('${note.id}')">✏️ Edit</button>
+                        ${note.status === 'unprocessed' ? `
+                            <button class="btn btn-primary btn-small" onclick="app.markProcessed('${note.id}')">✓ Processed</button>
+                        ` : ''}
+                        <button class="btn btn-secondary btn-small" onclick="app.deleteNote('${note.id}')">🗑️ Delete</button>
                     </div>
                 `;
 
@@ -1829,11 +2148,67 @@
                 document.getElementById('detail-modal').classList.remove('active');
             },
 
+            showLinkModal(noteId) {
+                this.state.currentNoteId = noteId;
+                const note = this.state.notes.find(n => n.id === noteId);
+                if (!note) return;
+
+                const modal = document.getElementById('link-modal');
+                const content = document.getElementById('link-content');
+
+                const existingLinks = note.linksTo || [];
+
+                content.innerHTML = `
+                    <p class="text-muted mb-3">Select notes to link to "${this.escapeHtml(note.title)}"</p>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${this.state.notes.filter(n => n.id !== noteId).map(n => `
+                            <div class="list-item">
+                                <label style="flex: 1; cursor: pointer; margin: 0;">
+                                    <input type="checkbox"
+                                           value="${n.id}"
+                                           ${existingLinks.includes(n.id) ? 'checked' : ''}
+                                           style="margin-right: 0.5rem;">
+                                    ${this.escapeHtml(n.title)}
+                                    <div class="text-muted" style="font-size: 0.85rem; margin-left: 1.5rem;">
+                                        <span class="note-type type-${n.type}">${n.type}</span>
+                                        ${n.tags.slice(0, 2).map(tag => `<span class="tag">${this.escapeHtml(tag)}</span>`).join('')}
+                                    </div>
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                modal.classList.add('active');
+            },
+
+            closeLinkModal() {
+                document.getElementById('link-modal').classList.remove('active');
+            },
+
+            saveLinks() {
+                const checkboxes = document.querySelectorAll('#link-content input[type="checkbox"]:checked');
+                const linkedIds = Array.from(checkboxes).map(cb => cb.value);
+
+                const note = this.state.notes.find(n => n.id === this.state.currentNoteId);
+                if (note) {
+                    note.linksTo = linkedIds;
+                    this.saveState();
+                    this.closeLinkModal();
+                    this.showNoteDetail(note.id);
+                }
+            },
+
             createActionFromPattern(noteId) {
-                this.showCaptureModal();
-                document.getElementById('note-type').value = 'decision';
-                document.getElementById('note-title').value = 'Action from Pattern';
                 this.closeDetailModal();
+                this.showCaptureModal(null, 'decision');
+                setTimeout(() => {
+                    const note = this.state.notes.find(n => n.id === noteId);
+                    if (note) {
+                        document.getElementById('note-title').value = `Action: ${note.title}`;
+                        document.getElementById('note-tags').value = note.tags.join(', ');
+                    }
+                }, 100);
             },
 
             renderTimelineView() {
@@ -1842,13 +2217,17 @@
                 );
 
                 return `
-                    <h2 style="margin-bottom: 2rem;">Timeline</h2>
+                    <h2 style="margin-bottom: 2rem;">Your Timeline</h2>
+                    <p class="text-muted mb-3">Every thought, in order.</p>
                     <div class="timeline">
                         ${sorted.map(note => `
                             <div class="timeline-item">
                                 <div class="timeline-date">
                                     ${new Date(note.dateCaptured).toLocaleDateString('en-US', {
-                                        month: 'short', day: 'numeric', year: 'numeric'
+                                        weekday: 'short',
+                                        month: 'short',
+                                        day: 'numeric',
+                                        year: 'numeric'
                                     })}
                                 </div>
                                 ${this.renderNoteCard(note)}
@@ -1873,7 +2252,7 @@
                         <div class="empty-state">
                             <div class="empty-state-icon">🏷️</div>
                             <h2>No tags yet</h2>
-                            <p>Add tags to your notes to see them here!</p>
+                            <p>Tags help you find patterns. Add some to your notes!</p>
                         </div>
                     `;
                 }
@@ -1881,15 +2260,18 @@
                 const maxCount = Math.max(...tags.map(t => t[1]));
 
                 return `
-                    <h2 style="margin-bottom: 2rem; text-align: center;">Tag Cloud</h2>
+                    <h2 style="margin-bottom: 1rem; text-align: center;">Your Tags</h2>
+                    <p class="text-muted" style="text-align: center; margin-bottom: 2rem;">
+                        Bigger = more notes. Click to filter.
+                    </p>
                     <div class="tag-cloud">
                         ${tags.map(([tag, count]) => {
-                            const size = 0.8 + (count / maxCount) * 1.2;
+                            const size = 0.9 + (count / maxCount) * 1.4;
                             return `
                                 <span class="cloud-tag"
                                       style="font-size: ${size}rem;"
-                                      onclick="app.filterByTag('${tag}')">
-                                    ${tag} (${count})
+                                      onclick="app.filterByTag('${this.escapeHtml(tag)}')">
+                                    ${this.escapeHtml(tag)} (${count})
                                 </span>
                             `;
                         }).join('')}
@@ -1898,9 +2280,21 @@
             },
 
             filterByTag(tag) {
-                this.state.currentView = 'notes';
+                this.state.currentView = 'all';
                 this.state.filters = { tag };
-                this.render();
+                this.switchView('all');
+
+                setTimeout(() => {
+                    const filtered = this.searchNotes('', { tag });
+                    const main = document.getElementById('main-content');
+                    main.innerHTML = `
+                        <h2 style="margin-bottom: 1rem;">Notes tagged "${this.escapeHtml(tag)}"</h2>
+                        <button class="btn btn-outline btn-small mb-3" onclick="app.switchView('all'); app.state.filters = {};">
+                            ← Back to all notes
+                        </button>
+                        ${filtered.map(note => this.renderNoteCard(note)).join('')}
+                    `;
+                }, 50);
             },
 
             renderProjectsView() {
@@ -1921,64 +2315,234 @@
                         <div class="empty-state">
                             <div class="empty-state-icon">📁</div>
                             <h2>No projects yet</h2>
-                            <p>Add project names to your notes to see them organized here!</p>
+                            <p>Link notes to projects to see your thinking evolve over time.</p>
                         </div>
                     `;
                 }
 
                 return `
-                    <h2 style="margin-bottom: 2rem;">Projects</h2>
-                    ${projectNames.map(project => `
-                        <div class="project-section">
-                            <h3 class="project-section-title">📁 ${project}</h3>
-                            ${projects[project].map(note => this.renderNoteCard(note)).join('')}
-                        </div>
-                    `).join('')}
+                    <h2 style="margin-bottom: 1rem;">Projects</h2>
+                    <p class="text-muted mb-3">See how your thinking evolved on each project.</p>
+                    ${projectNames.map(project => {
+                        const notes = projects[project].sort((a, b) =>
+                            new Date(a.dateCaptured) - new Date(b.dateCaptured)
+                        );
+                        return `
+                            <div class="project-section">
+                                <h3 class="project-section-title">📁 ${this.escapeHtml(project)}</h3>
+                                <p class="text-muted" style="margin-bottom: 1rem;">
+                                    ${notes.length} notes •
+                                    ${new Date(notes[0].dateCaptured).toLocaleDateString()} to
+                                    ${new Date(notes[notes.length - 1].dateCaptured).toLocaleDateString()}
+                                </p>
+                                ${notes.map(note => this.renderNoteCard(note)).join('')}
+                            </div>
+                        `;
+                    }).join('')}
                 `;
             },
 
-            renderGoalsView() {
-                const goals = {};
-                this.state.notes.forEach(note => {
-                    if (note.goal) {
-                        if (!goals[note.goal]) {
-                            goals[note.goal] = [];
-                        }
-                        goals[note.goal].push(note);
+            renderReviewView() {
+                return `
+                    <h2 style="margin-bottom: 1rem;">Review & Resurface</h2>
+                    <p class="text-muted mb-3">Your notes are only useful if you actually see them again.</p>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                        <div class="card card-clickable" onclick="app.switchView('review-weekly')">
+                            <h3>📅 This Week</h3>
+                            <p class="text-muted">Notes from the last 7 days</p>
+                        </div>
+                        <div class="card card-clickable" onclick="app.switchView('review-monthly')">
+                            <h3>📊 This Month</h3>
+                            <p class="text-muted">Themes and patterns</p>
+                        </div>
+                        <div class="card card-clickable" onclick="app.switchView('review-quarterly')">
+                            <h3>🗓️ 3 Months Ago</h3>
+                            <p class="text-muted">What were you thinking about?</p>
+                        </div>
+                        <div class="card card-clickable" onclick="app.switchView('review-random')">
+                            <h3>🎲 Random Note</h3>
+                            <p class="text-muted">Surprise yourself</p>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderWeeklyReview() {
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+
+                const thisWeek = this.state.notes.filter(note =>
+                    new Date(note.dateCaptured) >= weekAgo
+                ).sort((a, b) => new Date(b.dateCaptured) - new Date(a.dateCaptured));
+
+                return `
+                    <h2 style="margin-bottom: 1rem;">This Week's Captures</h2>
+                    <p class="text-muted mb-3">What your brain bumped into in the last 7 days.</p>
+
+                    <button class="btn btn-outline btn-small mb-3" onclick="app.switchView('review')">
+                        ← Back to Review
+                    </button>
+
+                    ${thisWeek.length === 0 ? `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📅</div>
+                            <p>Nothing captured this week. That's okay—life happens!</p>
+                        </div>
+                    ` : `
+                        <p style="margin-bottom: 1.5rem;"><strong>${thisWeek.length} notes this week</strong></p>
+                        ${thisWeek.map(note => this.renderNoteCard(note)).join('')}
+                    `}
+                `;
+            },
+
+            renderMonthlyReview() {
+                const monthAgo = new Date();
+                monthAgo.setDate(monthAgo.getDate() - 30);
+
+                const thisMonth = this.state.notes.filter(note =>
+                    new Date(note.dateCaptured) >= monthAgo
+                );
+
+                const tagCounts = {};
+                thisMonth.forEach(note => {
+                    note.tags.forEach(tag => {
+                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                    });
+                });
+
+                const topTags = Object.entries(tagCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10);
+
+                const typeBreakdown = {
+                    insight: 0,
+                    learning: 0,
+                    idea: 0,
+                    decision: 0,
+                    reference: 0,
+                    quote: 0,
+                    resource: 0
+                };
+
+                thisMonth.forEach(note => {
+                    if (typeBreakdown.hasOwnProperty(note.type)) {
+                        typeBreakdown[note.type]++;
                     }
                 });
 
-                const goalNames = Object.keys(goals).sort();
+                return `
+                    <h2 style="margin-bottom: 1rem;">This Month's Themes</h2>
+                    <p class="text-muted mb-3">Patterns from the last 30 days.</p>
 
-                if (goalNames.length === 0) {
+                    <button class="btn btn-outline btn-small mb-3" onclick="app.switchView('review')">
+                        ← Back to Review
+                    </button>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">${thisMonth.length} notes this month</h3>
+
+                        <div style="margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 0.5rem;">By Type</h4>
+                            ${Object.entries(typeBreakdown)
+                                .filter(([_, count]) => count > 0)
+                                .map(([type, count]) => `
+                                    <div style="margin-bottom: 0.5rem;">
+                                        <span class="note-type type-${type}">${type}</span>
+                                        <span style="margin-left: 0.5rem;">${count}</span>
+                                    </div>
+                                `).join('')}
+                        </div>
+
+                        ${topTags.length > 0 ? `
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem;">Top Tags</h4>
+                                <div class="tags">
+                                    ${topTags.map(([tag, count]) => `
+                                        <span class="tag" onclick="app.filterByTag('${this.escapeHtml(tag)}')">
+                                            ${this.escapeHtml(tag)} (${count})
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            },
+
+            renderQuarterlyReview() {
+                const threeMonthsAgo = new Date();
+                threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
+                const fourMonthsAgo = new Date();
+                fourMonthsAgo.setDate(fourMonthsAgo.getDate() - 120);
+
+                const notes = this.state.notes.filter(note => {
+                    const date = new Date(note.dateCaptured);
+                    return date >= fourMonthsAgo && date <= threeMonthsAgo;
+                }).sort((a, b) => new Date(b.dateCaptured) - new Date(a.dateCaptured));
+
+                return `
+                    <h2 style="margin-bottom: 1rem;">What You Were Thinking 3 Months Ago</h2>
+                    <p class="text-muted mb-3">Sometimes the best insights need time to marinate.</p>
+
+                    <button class="btn btn-outline btn-small mb-3" onclick="app.switchView('review')">
+                        ← Back to Review
+                    </button>
+
+                    ${notes.length === 0 ? `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">🗓️</div>
+                            <p>Nothing from that time period. You might not have been using this yet!</p>
+                        </div>
+                    ` : `
+                        <p style="margin-bottom: 1.5rem;"><strong>${notes.length} notes from ~3 months ago</strong></p>
+                        ${notes.map(note => this.renderNoteCard(note)).join('')}
+                    `}
+                `;
+            },
+
+            renderRandomNote() {
+                if (this.state.notes.length === 0) {
                     return `
                         <div class="empty-state">
-                            <div class="empty-state-icon">🎯</div>
-                            <h2>No goals yet</h2>
-                            <p>Add goal names to your notes to see them organized here!</p>
+                            <div class="empty-state-icon">🎲</div>
+                            <h2>No notes yet</h2>
+                            <p>Can't show you a random note if you haven't captured any!</p>
                         </div>
                     `;
                 }
 
+                const randomNote = this.state.notes[Math.floor(Math.random() * this.state.notes.length)];
+                const daysSince = Math.floor((new Date() - new Date(randomNote.dateCaptured)) / (1000 * 60 * 60 * 24));
+
                 return `
-                    <h2 style="margin-bottom: 2rem;">Goals</h2>
-                    ${goalNames.map(goal => `
-                        <div class="project-section">
-                            <h3 class="project-section-title">🎯 ${goal}</h3>
-                            ${goals[goal].map(note => this.renderNoteCard(note)).join('')}
-                        </div>
-                    `).join('')}
+                    <div class="card" style="text-align: center; padding: 2rem;">
+                        <h2 style="margin-bottom: 0.5rem;">🎲 Random Resurface</h2>
+                        <p class="text-muted">Here's something from ${daysSince} days ago. Why might it still matter?</p>
+                        <button class="btn btn-outline btn-small mt-2" onclick="app.switchView('review-random')">
+                            🔄 Show Me Another
+                        </button>
+                    </div>
+
+                    ${this.renderNoteCard(randomNote)}
+
+                    <div class="card" style="text-align: center;">
+                        <button class="btn btn-outline" onclick="app.switchView('review')">
+                            ← Back to Review
+                        </button>
+                    </div>
                 `;
             },
 
             renderReadingListView() {
                 return `
-                    <h2 style="margin-bottom: 2rem;">📚 Reading List</h2>
+                    <h2 style="margin-bottom: 1rem;">📚 Reading List</h2>
+                    <p class="text-muted mb-3">Stuff to read. No judgment if it never happens.</p>
 
                     <div class="card">
-                        <h3 class="mb-2">Add Item</h3>
+                        <h3 class="mb-2">Add Something</h3>
                         <div style="display: flex; gap: 0.5rem;">
-                            <input type="text" id="reading-input" placeholder="Book, article, or resource..."
+                            <input type="text" id="reading-input" placeholder="Book, article, link..."
                                    style="flex: 1;" onkeypress="if(event.key==='Enter') app.addToReadingList()">
                             <button class="btn btn-primary" onclick="app.addToReadingList()">Add</button>
                         </div>
@@ -1987,17 +2551,31 @@
                     ${this.state.lists.readingList.length === 0 ? `
                         <div class="empty-state">
                             <div class="empty-state-icon">📖</div>
-                            <p>Your reading list is empty. Add something to read!</p>
+                            <p>Your reading list is empty. Add something you want to read (or pretend you'll read).</p>
                         </div>
                     ` : `
                         ${this.state.lists.readingList.map((item, index) => `
                             <div class="list-item">
                                 <div class="list-item-content">
-                                    <input type="checkbox" onchange="app.toggleReadingItem(${index})">
-                                    <span style="margin-left: 0.5rem;">${item.title}</span>
+                                    <label style="display: flex; align-items: center; cursor: pointer; margin: 0;">
+                                        <input type="checkbox"
+                                               ${item.status === 'done' ? 'checked' : ''}
+                                               onchange="app.toggleReadingStatus(${index})"
+                                               style="margin-right: 0.5rem;">
+                                        <span style="${item.status === 'done' ? 'text-decoration: line-through; opacity: 0.6;' : ''}">
+                                            ${this.escapeHtml(item.title)}
+                                        </span>
+                                    </label>
                                 </div>
                                 <div class="list-item-actions">
-                                    <button class="btn btn-small btn-outline" onclick="app.removeFromReadingList(${index})">Remove</button>
+                                    ${item.status === 'done' ? `
+                                        <button class="btn btn-small btn-outline" onclick="app.createNoteFromReading(${index})">
+                                            → Note
+                                        </button>
+                                    ` : ''}
+                                    <button class="btn btn-small btn-outline" onclick="app.removeFromReadingList(${index})">
+                                        Remove
+                                    </button>
                                 </div>
                             </div>
                         `).join('')}
@@ -2007,12 +2585,13 @@
 
             renderSomedayView() {
                 return `
-                    <h2 style="margin-bottom: 2rem;">💭 Someday/Maybe</h2>
+                    <h2 style="margin-bottom: 1rem;">💭 Someday/Maybe</h2>
+                    <p class="text-muted mb-3">Ideas that might be good...someday. Or maybe never. And that's okay.</p>
 
                     <div class="card">
-                        <h3 class="mb-2">Add Item</h3>
+                        <h3 class="mb-2">Add an Idea</h3>
                         <div style="display: flex; gap: 0.5rem;">
-                            <input type="text" id="someday-input" placeholder="Something to consider later..."
+                            <input type="text" id="someday-input" placeholder="Something for later..."
                                    style="flex: 1;" onkeypress="if(event.key==='Enter') app.addToSomedayList()">
                             <button class="btn btn-primary" onclick="app.addToSomedayList()">Add</button>
                         </div>
@@ -2021,15 +2600,24 @@
                     ${this.state.lists.somedayMaybe.length === 0 ? `
                         <div class="empty-state">
                             <div class="empty-state-icon">💭</div>
-                            <p>Your someday/maybe list is empty. Add ideas for the future!</p>
+                            <p>Your someday/maybe list is empty. Perfect place for half-baked ideas!</p>
                         </div>
                     ` : `
                         ${this.state.lists.somedayMaybe.map((item, index) => `
                             <div class="list-item">
-                                <div class="list-item-content">${item.title}</div>
+                                <div class="list-item-content">
+                                    ${this.escapeHtml(item.title)}
+                                    <div class="text-muted" style="font-size: 0.85rem;">
+                                        Added ${new Date(item.addedDate).toLocaleDateString()}
+                                    </div>
+                                </div>
                                 <div class="list-item-actions">
-                                    <button class="btn btn-small btn-outline" onclick="app.moveToNote(${index})">→ Note</button>
-                                    <button class="btn btn-small btn-outline" onclick="app.removeFromSomedayList(${index})">Remove</button>
+                                    <button class="btn btn-small btn-outline" onclick="app.moveToNote(${index})">
+                                        → Note
+                                    </button>
+                                    <button class="btn btn-small btn-outline" onclick="app.removeFromSomedayList(${index})">
+                                        Remove
+                                    </button>
                                 </div>
                             </div>
                         `).join('')}
@@ -2037,13 +2625,121 @@
                 `;
             },
 
-            // List Management
+            renderSettingsView() {
+                return `
+                    <h2 style="margin-bottom: 1rem;">⚙️ Settings</h2>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">Preferences</h3>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox"
+                                       ${this.state.settings.darkMode ? 'checked' : ''}
+                                       onchange="app.toggleDarkMode()">
+                                Dark mode
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox"
+                                       ${this.state.settings.showDailyCapture ? 'checked' : ''}
+                                       onchange="app.toggleDailyCapture()">
+                                Show daily capture prompt on home
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="default-type">Default note type</label>
+                            <select id="default-type" onchange="app.updateDefaultType(this.value)">
+                                <option value="idea" ${this.state.settings.defaultType === 'idea' ? 'selected' : ''}>Idea</option>
+                                <option value="learning" ${this.state.settings.defaultType === 'learning' ? 'selected' : ''}>Learning</option>
+                                <option value="insight" ${this.state.settings.defaultType === 'insight' ? 'selected' : ''}>Insight</option>
+                                <option value="decision" ${this.state.settings.defaultType === 'decision' ? 'selected' : ''}>Decision</option>
+                                <option value="reference" ${this.state.settings.defaultType === 'reference' ? 'selected' : ''}>Reference</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="default-area">Default area</label>
+                            <select id="default-area" onchange="app.updateDefaultArea(this.value)">
+                                <option value="">None</option>
+                                <option value="business" ${this.state.settings.defaultArea === 'business' ? 'selected' : ''}>Business</option>
+                                <option value="personal" ${this.state.settings.defaultArea === 'personal' ? 'selected' : ''}>Personal</option>
+                                <option value="creative" ${this.state.settings.defaultArea === 'creative' ? 'selected' : ''}>Creative</option>
+                                <option value="other" ${this.state.settings.defaultArea === 'other' ? 'selected' : ''}>Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">Data Management</h3>
+
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <button class="btn btn-outline" onclick="app.exportAllJSON()">
+                                📦 Export All (JSON)
+                            </button>
+                            <button class="btn btn-outline" onclick="app.showImportModal()">
+                                📥 Import
+                            </button>
+                            <button class="btn btn-outline" onclick="app.clearAllData()">
+                                🗑️ Clear Everything
+                            </button>
+                        </div>
+
+                        <p class="text-muted mt-2" style="font-size: 0.85rem;">
+                            Your notes are stored locally in your browser. Export regularly to back them up!
+                        </p>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 1rem;">Stats</h3>
+                        <p><strong>${this.state.notes.length}</strong> notes</p>
+                        <p><strong>${this.state.lists.readingList.length}</strong> reading list items</p>
+                        <p><strong>${this.state.lists.somedayMaybe.length}</strong> someday/maybe items</p>
+                        <p class="mt-2">
+                            <strong>Storage used:</strong>
+                            ${(JSON.stringify(this.state).length / 1024).toFixed(1)} KB
+                        </p>
+                    </div>
+                `;
+            },
+
+            toggleDailyCapture() {
+                this.state.settings.showDailyCapture = !this.state.settings.showDailyCapture;
+                this.saveState();
+                this.render();
+            },
+
+            updateDefaultType(value) {
+                this.state.settings.defaultType = value;
+                this.saveState();
+            },
+
+            updateDefaultArea(value) {
+                this.state.settings.defaultArea = value;
+                this.saveState();
+            },
+
+            clearAllData() {
+                if (confirm('Delete EVERYTHING? This cannot be undone. Export first if you want a backup!')) {
+                    if (confirm('Seriously? All your notes will be gone forever.')) {
+                        localStorage.removeItem('pkb_notes');
+                        localStorage.removeItem('pkb_lists');
+                        localStorage.removeItem('pkb_settings');
+                        location.reload();
+                    }
+                }
+            },
+
             addToReadingList() {
                 const input = document.getElementById('reading-input');
-                if (input.value.trim()) {
+                if (input && input.value.trim()) {
                     this.state.lists.readingList.push({
+                        id: this.generateId(),
                         title: input.value.trim(),
-                        completed: false,
+                        status: 'to-read',
                         addedDate: new Date().toISOString()
                     });
                     input.value = '';
@@ -2052,21 +2748,33 @@
                 }
             },
 
+            toggleReadingStatus(index) {
+                const item = this.state.lists.readingList[index];
+                item.status = item.status === 'done' ? 'to-read' : 'done';
+                this.saveState();
+                this.render();
+            },
+
             removeFromReadingList(index) {
                 this.state.lists.readingList.splice(index, 1);
                 this.saveState();
                 this.render();
             },
 
-            toggleReadingItem(index) {
-                this.state.lists.readingList[index].completed = !this.state.lists.readingList[index].completed;
-                this.saveState();
+            createNoteFromReading(index) {
+                const item = this.state.lists.readingList[index];
+                this.showCaptureModal(null, 'book');
+                setTimeout(() => {
+                    document.getElementById('note-title').value = `Notes: ${item.title}`;
+                    document.getElementById('note-source').value = item.source || '';
+                }, 100);
             },
 
             addToSomedayList() {
                 const input = document.getElementById('someday-input');
-                if (input.value.trim()) {
+                if (input && input.value.trim()) {
                     this.state.lists.somedayMaybe.push({
+                        id: this.generateId(),
                         title: input.value.trim(),
                         addedDate: new Date().toISOString()
                     });
@@ -2084,46 +2792,88 @@
 
             moveToNote(index) {
                 const item = this.state.lists.somedayMaybe[index];
-                this.showCaptureModal();
-                document.getElementById('note-title').value = item.title;
-                document.getElementById('note-type').value = 'idea';
+                this.showCaptureModal(null, 'idea');
+                setTimeout(() => {
+                    document.getElementById('note-title').value = item.title;
+                }, 100);
                 this.removeFromSomedayList(index);
             },
 
-            // Search
             handleSearch(event) {
                 const query = event.target.value;
                 const filtered = this.searchNotes(query, this.state.filters);
 
                 const main = document.getElementById('main-content');
-                const notesHtml = filtered.map(note => this.renderNoteCard(note)).join('');
-
-                // Keep the search box and stats, just update notes
                 const searchContainer = main.querySelector('.search-container');
-                const stats = main.querySelector('.stats');
-                main.innerHTML = '';
-                if (stats) main.appendChild(stats);
-                if (searchContainer) main.appendChild(searchContainer);
-                main.insertAdjacentHTML('beforeend', notesHtml || '<div class="empty-state"><p>No notes found</p></div>');
+
+                let html = '';
+                if (searchContainer) {
+                    html += searchContainer.outerHTML;
+                }
+
+                if (query && filtered.length > 0) {
+                    html += `<p class="mb-2">Found ${filtered.length} notes</p>`;
+                }
+
+                html += filtered.length === 0 && query ?
+                    '<div class="empty-state"><p>No notes found. Try different keywords?</p></div>' :
+                    filtered.map(note => this.renderNoteCard(note)).join('');
+
+                main.innerHTML = html;
             },
 
-            // Stats
             getStats() {
                 return {
                     total: this.state.notes.length,
                     insights: this.state.notes.filter(n => n.type === 'insight').length,
                     ideas: this.state.notes.filter(n => n.type === 'idea').length,
-                    decisions: this.state.notes.filter(n => n.type === 'decision').length
+                    decisions: this.state.notes.filter(n => n.type === 'decision').length,
+                    learnings: this.state.notes.filter(n => n.type === 'learning').length
                 };
             },
 
-            // Export/Import
-            showExportModal() {
-                document.getElementById('export-modal').classList.add('active');
+            closeSuperNoteModal() {
+                document.getElementById('super-note-modal')?.classList.remove('active');
             },
 
-            closeExportModal() {
-                document.getElementById('export-modal').classList.remove('active');
+            showImportModal() {
+                const html = `
+                    <div id="import-modal-temp" class="modal active">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2 class="modal-title">Import Notes</h2>
+                                <button class="modal-close" onclick="document.getElementById('import-modal-temp').remove()">×</button>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="import-file">Select JSON File</label>
+                                <input type="file" id="import-file" accept=".json">
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="radio" name="import-mode" value="merge" checked>
+                                    Merge with existing notes
+                                </label>
+                                <br>
+                                <label>
+                                    <input type="radio" name="import-mode" value="replace">
+                                    Replace everything (dangerous!)
+                                </label>
+                            </div>
+
+                            <div class="modal-actions">
+                                <button class="btn btn-outline" onclick="document.getElementById('import-modal-temp').remove()">
+                                    Cancel
+                                </button>
+                                <button class="btn btn-primary" onclick="app.importJSON()">
+                                    Import
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', html);
             },
 
             exportAllJSON() {
@@ -2131,18 +2881,17 @@
                     notes: this.state.notes,
                     lists: this.state.lists,
                     settings: this.state.settings,
-                    exportDate: new Date().toISOString()
+                    exportDate: new Date().toISOString(),
+                    version: '2.0'
                 };
 
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `pkb-export-${new Date().toISOString().split('T')[0]}.json`;
+                a.download = `brain-backup-${new Date().toISOString().split('T')[0]}.json`;
                 a.click();
                 URL.revokeObjectURL(url);
-
-                this.closeExportModal();
             },
 
             exportNoteMarkdown(noteId) {
@@ -2153,9 +2902,7 @@
 
 **Type:** ${note.type}
 **Tags:** ${note.tags.join(', ')}
-${note.project ? `**Project:** ${note.project}` : ''}
-${note.goal ? `**Goal:** ${note.goal}` : ''}
-**Date:** ${new Date(note.dateCaptured).toLocaleDateString()}
+${note.project ? `**Project:** ${note.project}  \n` : ''}${note.goal ? `**Goal:** ${note.goal}  \n` : ''}**Date:** ${new Date(note.dateCaptured).toLocaleDateString()}
 
 ---
 
@@ -2171,19 +2918,11 @@ ${note.contentMarkdown}
                 URL.revokeObjectURL(url);
             },
 
-            showImportModal() {
-                document.getElementById('import-modal').classList.add('active');
-            },
-
-            closeImportModal() {
-                document.getElementById('import-modal').classList.remove('active');
-            },
-
             importJSON() {
                 const fileInput = document.getElementById('import-file');
-                const mode = document.querySelector('input[name="import-mode"]:checked').value;
+                const mode = document.querySelector('input[name="import-mode"]:checked')?.value || 'merge';
 
-                if (!fileInput.files.length) {
+                if (!fileInput || !fileInput.files.length) {
                     alert('Please select a file');
                     return;
                 }
@@ -2196,9 +2935,8 @@ ${note.contentMarkdown}
                         if (mode === 'replace') {
                             this.state.notes = data.notes || [];
                             this.state.lists = data.lists || { readingList: [], somedayMaybe: [] };
-                            this.state.settings = data.settings || {};
+                            this.state.settings = { ...this.state.settings, ...(data.settings || {}) };
                         } else {
-                            // Merge mode
                             if (data.notes) {
                                 this.state.notes = [...this.state.notes, ...data.notes];
                             }
@@ -2209,9 +2947,9 @@ ${note.contentMarkdown}
                         }
 
                         this.saveState();
-                        this.closeImportModal();
+                        document.getElementById('import-modal-temp')?.remove();
                         this.render();
-                        alert('Import successful!');
+                        alert('Import successful! Welcome back to your brain.');
                     } catch (error) {
                         alert('Error importing file: ' + error.message);
                     }
@@ -2221,7 +2959,6 @@ ${note.contentMarkdown}
             }
         };
 
-        // Initialize app when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             app.init();
         });
