@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Knowledge Base - Notion Sync</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #FAF7F0;
+            --surface: #FFF;
+            --sage: #8B9D83;
+            --sage-dark: #6B7D63;
+            --coral: #E39774;
+            --coral-dark: #D17854;
+            --text: #2C2C2C;
+            --text-light: #666;
+            --border: #DDD;
+            --shadow: rgba(0,0,0,0.1);
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --error: #f44336;
+        }
+
+        body.dark-mode {
+            --bg: #1a1a1a;
+            --surface: #2d2d2d;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --border: #444;
+            --shadow: rgba(0,0,0,0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding-bottom: 80px;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Sync Status Badge */
+        .sync-status {
+            position: fixed;
+            top: 70px;
+            right: 1rem;
+            background: var(--surface);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 8px var(--shadow);
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sync-status.syncing { color: var(--warning); }
+        .sync-status.synced { color: var(--success); }
+        .sync-status.error { color: var(--error); }
+        .sync-status.offline { color: var(--text-light); }
+
+        /* Setup Wizard Modal */
+        .setup-wizard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 1rem;
+        }
+
+        .setup-wizard.active {
+            display: flex;
+        }
+
+        .setup-content {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .setup-header h2 {
+            font-size: 1.8rem;
+            color: var(--sage-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .setup-step {
+            margin-bottom: 1.5rem;
+        }
+
+        .setup-step label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .setup-step input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .setup-step .help-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .setup-step .help-text a {
+            color: var(--sage-dark);
+        }
+
+        .setup-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .setup-error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .setup-error {
+            background: #5d1f1f;
+            color: #ff6b6b;
+        }
+
+        /* Include all existing styles from original PKB */
+        header {
+            background: var(--surface);
+            border-bottom: 2px solid var(--sage);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--sage-dark);
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .dark-mode-toggle {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        button, .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--sage);
+            color: var(--surface);
+        }
+
+        .btn-primary:hover {
+            background: var(--sage-dark);
+        }
+
+        .btn-secondary {
+            background: var(--coral);
+            color: var(--surface);
+        }
+
+        .btn-secondary:hover {
+            background: var(--coral-dark);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--sage);
+            color: var(--sage-dark);
+        }
+
+        .btn-outline:hover {
+            background: var(--sage);
+            color: var(--surface);
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-light);
+        }
+
+        /* Modal styles - keeping simple for now, will add full implementation */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 1rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Setup Wizard -->
+    <div id="setup-wizard" class="setup-wizard">
+        <div class="setup-content">
+            <div class="setup-header">
+                <h2>🧠 Welcome to Your Brain!</h2>
+                <p>Quick setup to connect with Notion</p>
+            </div>
+
+            <div class="setup-step">
+                <label for="setup-api-key">Notion API Key</label>
+                <input type="password" id="setup-api-key" placeholder="secret_..." />
+                <div class="help-text">
+                    Your API key from <a href="https://www.notion.so/my-integrations" target="_blank">Notion Integrations</a>
+                </div>
+            </div>
+
+            <div id="setup-error" class="setup-error" style="display: none;"></div>
+
+            <div class="setup-actions">
+                <button class="btn btn-outline" onclick="app.skipSetup()">Skip (Use Offline)</button>
+                <button class="btn btn-primary" onclick="app.completeSetup()">Connect & Sync</button>
+            </div>
+
+            <div class="help-text" style="margin-top: 1.5rem; text-align: center;">
+                Your API key is stored locally and never shared. ✅
+            </div>
+        </div>
+    </div>
+
+    <!-- Sync Status -->
+    <div id="sync-status" class="sync-status offline">
+        <span id="sync-icon">📱</span>
+        <span id="sync-text">Offline Mode</span>
+    </div>
+
+    <!-- Main Header -->
+    <header>
+        <div class="header-content">
+            <h1>📝 Personal Knowledge Base</h1>
+            <div class="header-actions">
+                <button class="dark-mode-toggle" onclick="app.toggleDarkMode()">🌙</button>
+                <button class="btn btn-primary btn-small" onclick="app.showSetupWizard()">⚙️ Settings</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <div class="empty-state">
+            <p>Initializing your brain...</p>
+        </div>
+    </main>
+
+    <script>
+        // Notion API Configuration
+        const NOTION_CONFIG = {
+            DATABASE_ID: '41c23945-579d-814d-aa01-000bfc2d39bc',
+            API_VERSION: '2022-06-28'
+        };
+
+        // Notion API Wrapper
+        class NotionAPI {
+            constructor(apiKey) {
+                this.apiKey = apiKey;
+                this.baseURL = 'https://api.notion.com/v1';
+            }
+
+            async request(endpoint, options = {}) {
+                const url = `${this.baseURL}${endpoint}`;
+                const headers = {
+                    'Authorization': `Bearer ${this.apiKey}`,
+                    'Notion-Version': NOTION_CONFIG.API_VERSION,
+                    'Content-Type': 'application/json'
+                };
+
+                try {
+                    const response = await fetch(url, {
+                        ...options,
+                        headers: { ...headers, ...options.headers }
+                    });
+
+                    if (!response.ok) {
+                        const error = await response.json();
+                        throw new Error(error.message || 'Notion API error');
+                    }
+
+                    return await response.json();
+                } catch (error) {
+                    console.error('Notion API Error:', error);
+                    throw error;
+                }
+            }
+
+            async testConnection() {
+                try {
+                    await this.request(`/databases/${NOTION_CONFIG.DATABASE_ID}`);
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
+
+            async queryDatabase(filter = {}) {
+                return await this.request(`/databases/${NOTION_CONFIG.DATABASE_ID}/query`, {
+                    method: 'POST',
+                    body: JSON.stringify({ filter })
+                });
+            }
+
+            async createPage(properties, content) {
+                const pageData = {
+                    parent: { database_id: NOTION_CONFIG.DATABASE_ID },
+                    properties: this.formatProperties(properties),
+                    children: content ? [this.formatContent(content)] : []
+                };
+
+                return await this.request('/pages', {
+                    method: 'POST',
+                    body: JSON.stringify(pageData)
+                });
+            }
+
+            async updatePage(pageId, properties) {
+                return await this.request(`/pages/${pageId}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({
+                        properties: this.formatProperties(properties)
+                    })
+                });
+            }
+
+            formatProperties(props) {
+                const formatted = {};
+
+                if (props.title) formatted['Name'] = { title: [{ text: { content: props.title } }] };
+                if (props.type) formatted['Type'] = { select: { name: props.type } };
+                if (props.tags) formatted['Tags'] = { multi_select: props.tags.map(t => ({ name: t })) };
+                if (props.content) formatted['Content'] = { rich_text: [{ text: { content: props.content.substring(0, 2000) } }] };
+                if (props.project) formatted['Project'] = { rich_text: [{ text: { content: props.project } }] };
+                if (props.goal) formatted['Goal'] = { rich_text: [{ text: { content: props.goal } }] };
+                if (props.area) formatted['Area'] = { rich_text: [{ text: { content: props.area } }] };
+                if (props.context) formatted['Context'] = { rich_text: [{ text: { content: props.context } }] };
+                if (props.source) formatted['Source'] = { rich_text: [{ text: { content: props.source } }] };
+                if (props.dateCaptured) formatted['Date Captured'] = { date: { start: props.dateCaptured.split('T')[0] } };
+                if (props.favorite !== undefined) formatted['Favorite'] = { checkbox: props.favorite };
+                if (props.keyInsight !== undefined) formatted['Key Insight'] = { checkbox: props.keyInsight };
+                if (props.status) formatted['Status'] = { select: { name: props.status } };
+                if (props.repetitionCount !== undefined) formatted['Repetition Count'] = { number: props.repetitionCount };
+
+                return formatted;
+            }
+
+            formatContent(markdown) {
+                return {
+                    object: 'block',
+                    type: 'paragraph',
+                    paragraph: {
+                        rich_text: [{ type: 'text', text: { content: markdown.substring(0, 2000) } }]
+                    }
+                };
+            }
+
+            parseNotionPage(page) {
+                const props = page.properties;
+                return {
+                    id: page.id.replace(/-/g, ''),
+                    notionId: page.id,
+                    title: props.Name?.title?.[0]?.text?.content || 'Untitled',
+                    type: props.Type?.select?.name || 'blank',
+                    tags: props.Tags?.multi_select?.map(t => t.name) || [],
+                    contentMarkdown: props.Content?.rich_text?.[0]?.text?.content || '',
+                    contentHtml: '', // Will be generated locally
+                    project: props.Project?.rich_text?.[0]?.text?.content || '',
+                    goal: props.Goal?.rich_text?.[0]?.text?.content || '',
+                    area: props.Area?.rich_text?.[0]?.text?.content || '',
+                    context: props.Context?.rich_text?.[0]?.text?.content || '',
+                    source: props.Source?.rich_text?.[0]?.text?.content || '',
+                    dateCaptured: props['Date Captured']?.date?.start ? `${props['Date Captured'].date.start}T00:00:00.000Z` : new Date().toISOString(),
+                    lastUpdated: page.last_edited_time,
+                    favorite: props.Favorite?.checkbox || false,
+                    keyInsight: props['Key Insight']?.checkbox || false,
+                    status: props.Status?.select?.name || 'unprocessed',
+                    repetitionCount: props['Repetition Count']?.number || 0,
+                    patternFlags: [],
+                    linksTo: []
+                };
+            }
+        }
+
+        // Main App
+        const app = {
+            notion: null,
+            syncInterval: null,
+
+            state: {
+                notes: [],
+                lists: { readingList: [], somedayMaybe: [] },
+                settings: {
+                    darkMode: false,
+                    dailyCaptureEnabled: true,
+                    notionApiKey: '',
+                    syncEnabled: false,
+                    lastSync: null
+                },
+                filters: {},
+                editingTags: [],
+                currentView: 'all'
+            },
+
+            async init() {
+                this.loadSettings();
+                this.applyDarkMode();
+
+                // Check if setup is needed
+                if (!this.state.settings.notionApiKey) {
+                    this.showSetupWizard();
+                } else {
+                    await this.initNotion();
+                }
+
+                // Load local data first (offline fallback)
+                this.loadLocalData();
+                this.render();
+
+                // Try to sync if connected
+                if (this.state.settings.syncEnabled) {
+                    await this.syncFromNotion();
+                    this.startAutoSync();
+                }
+            },
+
+            showSetupWizard() {
+                document.getElementById('setup-wizard').classList.add('active');
+            },
+
+            hideSetupWizard() {
+                document.getElementById('setup-wizard').classList.remove('active');
+            },
+
+            async completeSetup() {
+                const apiKey = document.getElementById('setup-api-key').value.trim();
+                const errorEl = document.getElementById('setup-error');
+
+                if (!apiKey) {
+                    errorEl.textContent = 'Please enter your Notion API key';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+
+                this.updateSyncStatus('syncing', 'Testing connection...');
+
+                try {
+                    // Test the connection
+                    const testNotion = new NotionAPI(apiKey);
+                    const connected = await testNotion.testConnection();
+
+                    if (!connected) {
+                        throw new Error('Could not connect to Notion database');
+                    }
+
+                    // Save the API key
+                    this.state.settings.notionApiKey = apiKey;
+                    this.state.settings.syncEnabled = true;
+                    this.saveSettings();
+
+                    // Initialize Notion
+                    await this.initNotion();
+
+                    // Initial sync
+                    await this.syncFromNotion();
+
+                    this.hideSetupWizard();
+                    this.updateSyncStatus('synced', 'Connected!');
+                    this.startAutoSync();
+
+                } catch (error) {
+                    console.error('Setup error:', error);
+                    errorEl.textContent = `Connection failed: ${error.message}. Check your API key and database connection.`;
+                    errorEl.style.display = 'block';
+                    this.updateSyncStatus('error', 'Connection failed');
+                }
+            },
+
+            skipSetup() {
+                this.state.settings.syncEnabled = false;
+                this.saveSettings();
+                this.hideSetupWizard();
+                this.updateSyncStatus('offline', 'Offline Mode');
+                this.render();
+            },
+
+            async initNotion() {
+                if (this.state.settings.notionApiKey) {
+                    this.notion = new NotionAPI(this.state.settings.notionApiKey);
+                }
+            },
+
+            updateSyncStatus(status, text) {
+                const statusEl = document.getElementById('sync-status');
+                const iconEl = document.getElementById('sync-icon');
+                const textEl = document.getElementById('sync-text');
+
+                statusEl.className = `sync-status ${status}`;
+                textEl.textContent = text;
+
+                const icons = {
+                    offline: '📱',
+                    syncing: '🔄',
+                    synced: '✅',
+                    error: '⚠️'
+                };
+
+                iconEl.textContent = icons[status] || '📱';
+            },
+
+            async syncFromNotion() {
+                if (!this.notion) return;
+
+                this.updateSyncStatus('syncing', 'Syncing...');
+
+                try {
+                    const response = await this.notion.queryDatabase();
+                    const notionNotes = response.results.map(page => this.notion.parseNotionPage(page));
+
+                    // Merge with local notes (Notion is source of truth)
+                    this.state.notes = notionNotes.map(note => ({
+                        ...note,
+                        contentHtml: this.markdownToHtml(note.contentMarkdown)
+                    }));
+
+                    this.state.settings.lastSync = new Date().toISOString();
+                    this.saveSettings();
+                    this.saveLocalData();
+                    this.render();
+
+                    this.updateSyncStatus('synced', 'Synced');
+                    setTimeout(() => {
+                        this.updateSyncStatus('synced', `Last sync: ${new Date().toLocaleTimeString()}`);
+                    }, 2000);
+
+                } catch (error) {
+                    console.error('Sync error:', error);
+                    this.updateSyncStatus('error', 'Sync failed');
+                }
+            },
+
+            startAutoSync() {
+                // Auto-sync every 5 minutes
+                if (this.syncInterval) clearInterval(this.syncInterval);
+                this.syncInterval = setInterval(() => this.syncFromNotion(), 5 * 60 * 1000);
+            },
+
+            loadSettings() {
+                const saved = localStorage.getItem('pkb-settings');
+                if (saved) {
+                    this.state.settings = { ...this.state.settings, ...JSON.parse(saved) };
+                }
+            },
+
+            saveSettings() {
+                localStorage.setItem('pkb-settings', JSON.stringify(this.state.settings));
+            },
+
+            loadLocalData() {
+                const notes = localStorage.getItem('pkb-notes');
+                const lists = localStorage.getItem('pkb-lists');
+
+                if (notes) this.state.notes = JSON.parse(notes);
+                if (lists) this.state.lists = JSON.parse(lists);
+            },
+
+            saveLocalData() {
+                localStorage.setItem('pkb-notes', JSON.stringify(this.state.notes));
+                localStorage.setItem('pkb-lists', JSON.stringify(this.state.lists));
+            },
+
+            applyDarkMode() {
+                if (this.state.settings.darkMode) {
+                    document.body.classList.add('dark-mode');
+                }
+            },
+
+            toggleDarkMode() {
+                this.state.settings.darkMode = !this.state.settings.darkMode;
+                document.body.classList.toggle('dark-mode');
+                this.saveSettings();
+            },
+
+            markdownToHtml(markdown) {
+                // Simple markdown parser
+                return markdown
+                    .split('\n')
+                    .map(line => {
+                        if (line.startsWith('# ')) return `<h1>${line.slice(2)}</h1>`;
+                        if (line.startsWith('## ')) return `<h2>${line.slice(3)}</h2>`;
+                        if (line.startsWith('### ')) return `<h3>${line.slice(4)}</h3>`;
+                        if (line.trim() === '') return '<br>';
+                        return `<p>${line}</p>`;
+                    })
+                    .join('');
+            },
+
+            render() {
+                const main = document.getElementById('main-content');
+
+                if (this.state.notes.length === 0) {
+                    main.innerHTML = `
+                        <div class="empty-state">
+                            <h2>Your Brain is Empty!</h2>
+                            <p>Start capturing your thoughts, ideas, and learnings.</p>
+                            <button class="btn btn-primary" onclick="alert('Note capture coming in next update!')">
+                                ➕ Create First Note
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    main.innerHTML = `
+                        <div class="empty-state">
+                            <h2>🎉 ${this.state.notes.length} Notes Synced!</h2>
+                            <p>Your Notion database is connected and working.</p>
+                            <p style="margin-top: 1rem; color: var(--text-light);">
+                                Full PKB interface coming in the next update!
+                            </p>
+                        </div>
+                    `;
+                }
+            }
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
