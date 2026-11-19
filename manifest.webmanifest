@@ -1,0 +1,19 @@
+{
+  "name": "Your Brain, Externalized",
+  "short_name": "Brain",
+  "description": "Capture ideas, learnings and decisions. Synced with Notion.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#110E20",
+  "theme_color": "#221B3D",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Capture a note", "short_name": "Capture", "url": "/?capture=1", "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

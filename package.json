@@ -1,0 +1,13 @@
+{
+  "name": "personal-knowledge-base",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Your Brain, Externalized: a personal knowledge base synced with Notion",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

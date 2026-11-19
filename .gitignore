@@ -1,0 +1,14 @@
+.env
+node_modules/
+
+# Licensed Creative Fabrica art: keep out of the public repo (rebuild with tools/prep_art.py)
+assets/art/
+
+# App icons are made from the licensed art too (rebuild with tools/make_icons.py)
+icons/
+
+# Deploy target (contains the private site address)
+.hostinger/
+
+# Local preview settings
+.claude/

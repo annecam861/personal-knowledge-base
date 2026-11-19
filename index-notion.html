@@ -117,7 +117,8 @@
             color: var(--text);
         }
 
-        .setup-step input {
+        .setup-step input,
+        .setup-step select {
             width: 100%;
             padding: 0.8rem;
             border: 1px solid var(--border);
@@ -345,62 +346,93 @@
     <script>
         // Notion API Configuration
         const NOTION_CONFIG = {
-            DATABASE_ID: '41c23945-579d-814d-aa01-000bfc2d39bc',
+            // Database ID (not the data source / collection ID 41c23945-579d-814d-aa01-000bfc2d39bc)
+            DATABASE_ID: '41c23945-579d-816d-8f51-c7567eab03ef',
             API_VERSION: '2022-06-28'
         };
 
         // Notion API Wrapper
         class NotionAPI {
-            constructor(apiKey) {
+            constructor(apiKey, databaseId) {
                 this.apiKey = apiKey;
-                this.baseURL = 'https://api.notion.com/v1';
+                this.databaseId = databaseId || NOTION_CONFIG.DATABASE_ID;
+                // Calls go through the local proxy in server.js. Notion's API
+                // rejects direct browser requests (no CORS), so this must be
+                // served by `node server.js`, not opened as a file.
+                this.baseURL = '/notion';
             }
 
             async request(endpoint, options = {}) {
                 const url = `${this.baseURL}${endpoint}`;
                 const headers = {
-                    'Authorization': `Bearer ${this.apiKey}`,
                     'Notion-Version': NOTION_CONFIG.API_VERSION,
                     'Content-Type': 'application/json'
                 };
+                if (this.apiKey) headers['X-Notion-Token'] = this.apiKey;
 
+                let response;
                 try {
-                    const response = await fetch(url, {
+                    response = await fetch(url, {
                         ...options,
                         headers: { ...headers, ...options.headers }
                     });
-
-                    if (!response.ok) {
-                        const error = await response.json();
-                        throw new Error(error.message || 'Notion API error');
-                    }
-
-                    return await response.json();
                 } catch (error) {
-                    console.error('Notion API Error:', error);
-                    throw error;
+                    throw new Error(location.protocol === 'file:'
+                        ? 'Open the app through the local server (node server.js), not as a file'
+                        : 'Local server is not running. Start it with: node server.js');
                 }
+
+                const data = await response.json().catch(() => ({}));
+                if (!response.ok) {
+                    const err = new Error(data.message || `Notion API error (${response.status})`);
+                    err.status = response.status;
+                    err.code = data.code;
+                    console.error('Notion API Error:', response.status, data);
+                    throw err;
+                }
+                return data;
             }
 
-            async testConnection() {
-                try {
-                    await this.request(`/databases/${NOTION_CONFIG.DATABASE_ID}`);
-                    return true;
-                } catch (error) {
-                    return false;
-                }
-            }
-
-            async queryDatabase(filter = {}) {
-                return await this.request(`/databases/${NOTION_CONFIG.DATABASE_ID}/query`, {
+            // Every database this integration has been given access to
+            async listDatabases() {
+                const res = await this.request('/search', {
                     method: 'POST',
-                    body: JSON.stringify({ filter })
+                    body: JSON.stringify({ filter: { property: 'object', value: 'database' }, page_size: 100 })
                 });
+                return res.results.map(db => ({
+                    id: db.id,
+                    title: db.title?.map(t => t.plain_text).join('') || 'Untitled database'
+                }));
+            }
+
+            // Throws a readable error instead of returning false
+            async testConnection() {
+                const db = await this.request(`/databases/${this.databaseId}`);
+                return db;
+            }
+
+            // Returns { results } with every page, following Notion's 100-per-page cursor.
+            // Notion rejects an empty filter object, so only send one when given.
+            async queryDatabase(filter) {
+                const results = [];
+                let cursor;
+                do {
+                    const body = { page_size: 100 };
+                    if (filter && Object.keys(filter).length) body.filter = filter;
+                    if (cursor) body.start_cursor = cursor;
+                    const page = await this.request(`/databases/${this.databaseId}/query`, {
+                        method: 'POST',
+                        body: JSON.stringify(body)
+                    });
+                    results.push(...page.results);
+                    cursor = page.has_more ? page.next_cursor : null;
+                } while (cursor);
+                return { results };
             }
 
             async createPage(properties, content) {
                 const pageData = {
-                    parent: { database_id: NOTION_CONFIG.DATABASE_ID },
+                    parent: { database_id: this.databaseId },
                     properties: this.formatProperties(properties),
                     children: content ? [this.formatContent(content)] : []
                 };
@@ -502,8 +534,8 @@
                 this.loadSettings();
                 this.applyDarkMode();
 
-                // Check if setup is needed
-                if (!this.state.settings.notionApiKey) {
+                // Check if setup is needed (a token in the server's .env counts)
+                if (!this.state.settings.notionApiKey && !this.state.settings.syncEnabled) {
                     this.showSetupWizard();
                 } else {
                     await this.initNotion();
@@ -532,8 +564,9 @@
                 const apiKey = document.getElementById('setup-api-key').value.trim();
                 const errorEl = document.getElementById('setup-error');
 
-                if (!apiKey) {
-                    errorEl.textContent = 'Please enter your Notion API key';
+                errorEl.style.display = 'none';
+                if (!apiKey && !(await this.serverHasToken())) {
+                    errorEl.textContent = 'Please enter your Notion API key (or add NOTION_TOKEN to .env and restart the server)';
                     errorEl.style.display = 'block';
                     return;
                 }
@@ -541,15 +574,35 @@
                 this.updateSyncStatus('syncing', 'Testing connection...');
 
                 try {
-                    // Test the connection
-                    const testNotion = new NotionAPI(apiKey);
-                    const connected = await testNotion.testConnection();
+                    // 1. Which databases can this key see? (also validates the key)
+                    const probe = new NotionAPI(apiKey);
+                    const databases = await probe.listDatabases();
+                    const picker = document.getElementById('setup-db');
+                    const chosen = picker && picker.value;
 
-                    if (!connected) {
-                        throw new Error('Could not connect to Notion database');
+                    let databaseId;
+                    if (chosen) {
+                        databaseId = chosen;
+                    } else if (databases.length === 0) {
+                        const err = new Error('Your key works, but no databases are shared with this integration yet.');
+                        err.status = 'no_databases';
+                        throw err;
+                    } else if (databases.length === 1) {
+                        databaseId = databases[0].id;
+                    } else {
+                        const saved = this.state.settings.databaseId;
+                        this.showDatabasePicker(databases, saved);
+                        this.updateSyncStatus('offline', 'Pick a database');
+                        return;
                     }
 
-                    // Save the API key
+                    // 2. Test the chosen database (throws Notion's own error message)
+                    const testNotion = new NotionAPI(apiKey, databaseId);
+                    const db = await testNotion.testConnection();
+                    console.log('Connected to Notion database:', db.title?.[0]?.plain_text, Object.keys(db.properties || {}));
+
+                    // Save the API key and database
+                    this.state.settings.databaseId = databaseId;
                     this.state.settings.notionApiKey = apiKey;
                     this.state.settings.syncEnabled = true;
                     this.saveSettings();
@@ -557,19 +610,40 @@
                     // Initialize Notion
                     await this.initNotion();
 
-                    // Initial sync
-                    await this.syncFromNotion();
-
+                    // Initial sync (it sets its own status, including on failure)
                     this.hideSetupWizard();
-                    this.updateSyncStatus('synced', 'Connected!');
+                    await this.syncFromNotion();
                     this.startAutoSync();
 
                 } catch (error) {
                     console.error('Setup error:', error);
-                    errorEl.textContent = `Connection failed: ${error.message}. Check your API key and database connection.`;
+                    const hints = {
+                        401: 'The token was rejected. Copy it again from notion.so/my-integrations.',
+                        404: 'Notion can\'t see the database. Open it in Notion → ••• → Connections → add your integration.',
+                        400: 'The database ID may be wrong.',
+                        no_databases: 'In Notion, open your knowledge base database (as a full page), click ••• at the top right → Connections → find your integration and confirm. Then click Connect & Sync again.'
+                    };
+                    errorEl.textContent = `Connection failed: ${error.message}${hints[error.status] ? ' — ' + hints[error.status] : ''}`;
                     errorEl.style.display = 'block';
                     this.updateSyncStatus('error', 'Connection failed');
                 }
+            },
+
+            showDatabasePicker(databases, selectedId) {
+                let step = document.getElementById('setup-db-step');
+                if (!step) {
+                    step = document.createElement('div');
+                    step.id = 'setup-db-step';
+                    step.className = 'setup-step';
+                    document.getElementById('setup-error').before(step);
+                }
+                const norm = id => (id || '').replace(/-/g, '');
+                step.innerHTML = `
+                    <label for="setup-db">Which database is your knowledge base?</label>
+                    <select id="setup-db">${databases.map(db =>
+                        `<option value="${db.id}" ${norm(db.id) === norm(selectedId) ? 'selected' : ''}>${db.title.replace(/</g, '&lt;')}</option>`
+                    ).join('')}</select>
+                    <div class="help-text">These are the databases shared with your integration. Pick one, then click Connect & Sync.</div>`;
             },
 
             skipSetup() {
@@ -581,8 +655,16 @@
             },
 
             async initNotion() {
-                if (this.state.settings.notionApiKey) {
-                    this.notion = new NotionAPI(this.state.settings.notionApiKey);
+                // Empty key is fine when the server holds NOTION_TOKEN
+                this.notion = new NotionAPI(this.state.settings.notionApiKey || "", this.state.settings.databaseId);
+            },
+
+            async serverHasToken() {
+                try {
+                    const res = await fetch('/api/status');
+                    return (await res.json()).serverToken === true;
+                } catch {
+                    return false;
                 }
             },
 
@@ -629,9 +711,11 @@
                         this.updateSyncStatus('synced', `Last sync: ${new Date().toLocaleTimeString()}`);
                     }, 2000);
 
+                    return true;
                 } catch (error) {
                     console.error('Sync error:', error);
-                    this.updateSyncStatus('error', 'Sync failed');
+                    this.updateSyncStatus('error', `Sync failed: ${error.message.split('\n')[0]}`);
+                    return false;
                 }
             },
 
